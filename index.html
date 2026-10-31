@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Cluster 9 TANAW (Tracking and Analysis of Needed Academic and Workforce Data). One click. Clear insights. Better guiding decisions toward Security, Harmony, and Excellence."><link rel="icon" href="logo.png">
+<title>Cluster 9 TANAW (Tracking and Analysis of Needed Academic and Workforce Data)</title>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+<script src="config.js"></script>
+<style>
+:root{--ink:#2b1216;--g:#7a1f2b;--g2:#f3e3e5;--amb:#d9a21b;--sky:#b5495b;--bg:#f8f2f2;--card:#fff;--ln:#e6d6d8;--mut:#7a6468;--red:#d63a2f}
+*{box-sizing:border-box}body{margin:0;font:14px/1.45 "IBM Plex Sans",system-ui,sans-serif;background:var(--bg);color:var(--ink)}
+h1,h2,h3{font-family:"Source Serif 4",Georgia,serif;margin:0}
+button,select,input{font:inherit}button{cursor:pointer}:focus-visible{outline:3px solid var(--amb);outline-offset:2px}
+.btn{background:var(--g);color:#fff;border:0;border-radius:6px;padding:8px 14px;font-weight:600}.btn.alt{background:#fff;color:var(--g);border:1px solid var(--g)}.btn.sm{padding:4px 9px;font-size:12px}
+#login{min-height:100vh;display:grid;grid-template-columns:1.1fr 1fr}
+.hero{background:var(--g) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400' fill='none' stroke='%23ffffff' stroke-opacity='.12'%3E%3Cpath d='M-20 330C90 250 180 330 280 250S470 170 640 230'/%3E%3Cpath d='M-20 290C90 210 180 290 280 210S470 130 640 190'/%3E%3Cpath d='M-20 250C90 170 180 250 280 170S470 90 640 150'/%3E%3Cpath d='M-20 210C90 130 180 210 280 130S470 50 640 110'/%3E%3Cpath d='M-20 370C90 290 180 370 280 290S470 210 640 270'/%3E%3C/svg%3E") bottom/cover;color:#fff;padding:56px;display:flex;flex-direction:column;justify-content:flex-end}
+.hero h1{font-size:64px;letter-spacing:-1px}.hero p{max-width:34ch;font-size:17px;opacity:.9}
+.lf{display:flex;flex-direction:column;justify-content:center;padding:48px;max-width:420px;width:100%;margin:auto}
+label{display:block;font-weight:600;margin:12px 0 4px}input,select{width:100%;padding:9px;border:1px solid var(--ln);border-radius:6px;background:#fff}
+.err{color:var(--red);min-height:20px;margin-top:8px}
+header{background:var(--g);color:#fff;display:flex;gap:12px;align-items:center;padding:10px 20px;flex-wrap:wrap}header h2{font-size:20px;margin-right:auto}header select{width:auto;max-width:240px}
+nav{display:flex;gap:4px;padding:10px 20px 0;flex-wrap:wrap;border-bottom:1px solid var(--ln);background:#fff}
+nav button{border:0;background:none;padding:9px 12px;border-bottom:3px solid transparent;color:var(--mut);font-weight:600}nav button.on{color:var(--g);border-color:var(--amb)}
+main{padding:20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(540px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--ln);border-radius:8px;padding:16px;min-width:0}.card.wide{grid-column:1/-1}.card h3{font-size:17px;margin-bottom:10px}
+.kp{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}.kp div{background:#fff;border:1px solid var(--ln);border-left:4px solid var(--amb);border-radius:6px;padding:10px 12px}.kp b{display:block;font:700 26px "Source Serif 4",serif}.kp span{color:var(--mut);font-size:12px}
+.cv{height:280px;position:relative}.tw{overflow:auto;max-height:520px}
+table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:6px 8px;border-bottom:1px solid var(--ln);white-space:nowrap}th{background:var(--g2);position:sticky;top:0;text-align:right}th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:#fff}th:first-child{background:var(--g2)}td.n{text-align:right;font-variant-numeric:tabular-nums}
+.adv{background:#dcfce7}.pro{background:#d8ece9}.app{background:#efe0ea}.dev{background:#fbeec8}.beg{background:#fee2e2}
+.grid input{text-align:right;padding:5px 7px;min-width:78px}.grid td{padding:3px 4px}.note{color:var(--mut);font-size:12px;margin:6px 0}
+.ok{color:var(--g);font-weight:600}.warn{color:var(--red);font-weight:600}
+@media(max-width:800px){#login{grid-template-columns:1fr}.hero{min-height:220px;padding:28px}.hero h1{font-size:44px}main{grid-template-columns:1fr}}
+@media print{header select,header button,nav,.btn{display:none}.card{break-inside:avoid}}
+
+[hidden]{display:none!important}
+#home{background:#3d0c14;color:#fff}
+.nv{display:flex;align-items:center;gap:16px;padding:16px 6vw;position:relative;z-index:2}.nv b{font:700 24px "Source Serif 4",serif;margin-right:auto}
+a.btn{text-decoration:none;display:inline-block}.btn.w{background:transparent;color:#fff;border:1px solid #ffffff88}.btn.amb{background:var(--amb);color:#2b1216}.btn.big{padding:12px 22px;font-size:15px}
+.hh{position:relative;overflow:hidden;display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding:40px 6vw 90px;min-height:76vh}
+.ct{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}.ct path{fill:none;stroke:#e8a3ae;stroke-opacity:.35;stroke-width:1.2;stroke-dasharray:14 10;animation:flow 30s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-480}}
+.hh>div{position:relative}.hh h1{font-size:clamp(40px,6vw,78px);line-height:1.02;letter-spacing:-1.5px;animation:rise .9s both}
+.hh p{font-size:18px;max-width:46ch;opacity:.9;animation:rise .9s .15s both}.cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px;animation:rise .9s .3s both}
+.mock{background:#fff;color:var(--ink);border-radius:12px;padding:16px;box-shadow:0 30px 60px #0007;animation:rise 1s .3s both,bob 7s 1.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-10px)}}
+.mock .row{display:flex;gap:8px}.mock .row div{flex:1;border-left:4px solid var(--amb);background:var(--bg);padding:6px 8px;border-radius:6px;font-size:12px;color:var(--mut)}.mock b{display:block;font:700 22px "Source Serif 4",serif;color:var(--ink)}
+.bars{display:flex;align-items:flex-end;gap:6px;height:130px;margin-top:14px}.bars s{flex:1;background:var(--g);border-radius:3px 3px 0 0;height:var(--h);transform-origin:bottom;animation:grow 1.2s cubic-bezier(.2,.7,.2,1) both,pulse 4s 1.6s ease-in-out infinite alternate}.bars s:nth-child(even){background:var(--amb)}
+@keyframes grow{from{transform:scaleY(0)}}@keyframes pulse{to{transform:scaleY(.8)}}
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:#5c1420}.strip div{background:#3d0c14;padding:26px 6vw}.strip b{display:block;font:700 42px "Source Serif 4",serif;color:#f0c24b}
+.sec{background:var(--bg);color:var(--ink);padding:72px 6vw}.sec h2{font-size:clamp(28px,4vw,44px);margin-bottom:8px;max-width:20ch}.sec>p{max-width:60ch;color:var(--mut)}
+.fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}.fg div{background:#fff;border:1px solid var(--ln);border-radius:8px;padding:20px;transition:transform .25s,box-shadow .25s}.fg div:hover{transform:translateY(-5px);box-shadow:0 14px 30px #2b121622}.fg h3{font-size:18px;margin-bottom:6px}.fg p{margin:0;color:var(--mut)}
+.steps{counter-reset:s}.steps div{counter-increment:s;position:relative;padding-left:62px}.steps div:before{content:counter(s);position:absolute;left:18px;top:14px;width:30px;height:30px;border-radius:50%;background:var(--g);color:#fff;display:grid;place-items:center;font-weight:700}
+.band{background:var(--g);color:#fff;padding:56px 6vw;text-align:center}.band h2{margin-bottom:16px}
+.rv{opacity:0;transform:translateY(26px);transition:opacity .7s,transform .7s cubic-bezier(.2,.7,.2,1)}.rv.in{opacity:1;transform:none}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}}
+main>*{animation:rise .55s cubic-bezier(.2,.7,.2,1) both;animation-delay:var(--d,0ms)}
+nav button{transition:color .2s,border-color .2s}tbody tr:hover td{background:#fbeff1}.kp div{transition:transform .2s}.kp div:hover{transform:translateY(-3px)}
+footer{background:#2e080e;color:#f0d9dc;padding:28px 6vw;display:grid;gap:6px;font-size:13px}footer b{color:#fff}
+#demo{background:var(--amb);color:#2b1216;text-align:center;padding:5px;font-weight:600}
+.af{display:grid;grid-template-columns:1fr 2fr 1fr auto;gap:8px;align-items:end}textarea{width:100%;padding:9px;border:1px solid var(--ln);border-radius:6px;font:inherit}
+@media(max-width:800px){.hh{grid-template-columns:1fr}.af{grid-template-columns:1fr}}
+
+.logo{display:block;width:100%;height:auto;position:relative;filter:drop-shadow(0 18px 30px #0008);animation:rise 1s both,bob 8s 1s ease-in-out infinite}
+.lg{position:relative;display:grid;justify-items:center;gap:18px;width:min(100%,420px);margin:auto}
+.sun{position:absolute;left:50%;top:44%;width:150%;aspect-ratio:1;translate:-50% -50%;border-radius:50%;background:repeating-conic-gradient(#f0c24b2e 0 5deg,transparent 5deg 15deg);-webkit-mask:radial-gradient(circle,#000 28%,transparent 68%);mask:radial-gradient(circle,#000 28%,transparent 68%);animation:spin 70s linear infinite}
+@keyframes spin{to{rotate:360deg}}
+.tag{position:relative;font:700 clamp(26px,3.2vw,38px)/1.1 "Source Serif 4",serif;color:#f0c24b;text-align:center;animation:rise 1s .4s both}.tag em,.ft em{font-style:italic}
+.tag:after{content:"";display:block;height:3px;margin:12px auto 0;background:linear-gradient(90deg,transparent,#f0c24b,transparent);animation:ul 1.4s .9s both}
+@keyframes ul{from{width:0}to{width:100%}}
+.hh{grid-template-columns:.9fr 1.1fr}.nv img{border-radius:50%}
+.glance{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;padding:64px 6vw;background:#2e080e}.glance h2{font-size:clamp(26px,3.4vw,40px);margin-bottom:10px}.glance p{opacity:.85;max-width:44ch}.glance .mock{animation:bob 7s ease-in-out infinite}
+.hero .logo.sm{width:150px;margin-bottom:16px;animation:none}.tag2{font:italic 700 22px "Source Serif 4",serif;color:#f0c24b;margin-bottom:12px}
+.hl{border-radius:50%;background:#fff}.fl{display:flex;gap:18px;align-items:center}.fl img{border-radius:50%;background:#fff}.ft{font:700 20px "Source Serif 4",serif;color:#f0c24b;margin-bottom:4px}
+@media(max-width:800px){.glance{grid-template-columns:1fr}}
+@property --p{syntax:'<number>';inherits:false;initial-value:0}
+.sub{color:var(--mut);font-size:12px;margin:-6px 0 10px}.cv{height:auto}
+.rings{display:flex;justify-content:space-around;gap:16px;flex-wrap:wrap}.rg{display:grid;justify-items:center;gap:8px;font-weight:600;color:var(--mut);font-size:12px}
+.ring{--p:0;width:112px;height:112px;border-radius:50%;background:conic-gradient(var(--g) calc(var(--p)*1%),var(--g2) 0);display:grid;place-items:center;position:relative;animation:fillr 1.4s .3s cubic-bezier(.2,.7,.2,1) forwards}
+.ring:after{content:"";position:absolute;inset:12px;background:#fff;border-radius:50%}.ring b{position:relative;z-index:1;font:700 22px "Source Serif 4",serif;color:var(--ink)}
+@keyframes fillr{from{--p:0}to{--p:var(--t)}}
+.pg{display:grid;grid-template-columns:minmax(120px,300px) 1fr 44px;gap:12px;align-items:center;margin:8px 0;font-size:13px}.pg i{height:12px;background:var(--g2);border-radius:6px;overflow:hidden}.pg u{display:block;height:100%;width:var(--w);background:linear-gradient(90deg,var(--g),#b5495b);border-radius:6px;animation:wid 1.2s .2s cubic-bezier(.2,.7,.2,1) both}.pg em{font-style:normal;color:var(--mut);text-align:right}
+@keyframes wid{from{width:0}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
+
+/* ---- Cluster 9 TANAW title treatment ---- */
+.eb{font:600 12px/1.3 "IBM Plex Sans",sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#e8a3ae;margin-bottom:12px;animation:rise .9s both}
+.hh h1,.hero h1{font-size:clamp(68px,10.5vw,136px);line-height:.9;letter-spacing:-2px;margin:0 0 16px}
+.c9{display:block;font-size:.34em;letter-spacing:.01em;color:#f0c24b;font-weight:700;line-height:1.15;margin-bottom:.1em}
+.tn{background:linear-gradient(100deg,#fff 15%,#f0c24b 55%,#fff 90%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 7s linear infinite}
+@keyframes shine{to{background-position:-200% 0}}
+.acr{font:600 clamp(15px,1.5vw,19px)/1.45 "IBM Plex Sans",sans-serif;color:#fff;max-width:36ch;margin:0 0 16px;animation:rise .9s .1s both}
+.acr b{font:700 1.4em "Source Serif 4",Georgia,serif;color:#f0c24b}
+.tagline{font:italic 600 clamp(18px,2vw,24px)/1.35 "Source Serif 4",Georgia,serif;color:#f0c24b;max-width:34ch;border-left:3px solid #f0c24b;padding-left:14px;margin:0 0 20px;animation:rise .9s .2s both}
+.hero .acr,.hero .tagline{max-width:34ch}
+.nv b small{font:600 11px "IBM Plex Sans",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#e8a3ae;margin-left:10px}
+header h2 small{display:block;margin-top:2px}
+.grid input[type=checkbox]{min-width:0;width:22px;height:22px;accent-color:#7a1f2b;cursor:pointer}.grid textarea{width:100%;font:inherit;padding:6px;border:1px solid #e3cfd3;border-radius:6px}.wr td{white-space:normal;vertical-align:top;min-width:140px}
+</style></head><body>
+<div id="home"><div class="nv"><img src="logo.png" alt="" width="46" height="46"><b>Cluster 9 TANAW</b><a href="#" class="btn w go-login">Sign in</a></div>
+<div class="hh"><svg class="ct" viewBox="0 0 1200 700" preserveAspectRatio="none" aria-hidden="true"><path d="M-20 160C200 40 380 250 600 140S1000 20 1240 130"/><path d="M-20 230C200 110 380 320 600 210S1000 90 1240 200"/><path d="M-20 300C200 180 380 390 600 280S1000 160 1240 270"/><path d="M-20 370C200 250 380 460 600 350S1000 230 1240 340"/><path d="M-20 440C200 320 380 530 600 420S1000 300 1240 410"/><path d="M-20 510C200 390 380 600 600 490S1000 370 1240 480"/><path d="M-20 580C200 460 380 670 600 560S1000 440 1240 550"/></svg>
+<div class="lg"><div class="sun" aria-hidden="true"></div><img class="logo" src="logo.png" alt="Seal of Cluster 9 Secondary Schools of Davao City, Baguio District" width="380" height="371"></div>
+<div class="tx"><div class="eb">Office of the Public Schools District Supervisor • Schools Division of Davao City</div><h1><span class="c9">Cluster 9</span> <span class="tn">TANAW</span></h1><div class="acr"><b>T</b>racking and <b>A</b>nalysis of <b>N</b>eeded <b>A</b>cademic and <b>W</b>orkforce Data</div><div class="tagline">One click. Clear insights. Better guiding decisions toward Security, Harmony, and Excellence.</div><p>Every school in Cluster 9, in one clear view. School heads encode their data once. The Office of the PSDS sees enrollment, personnel, performance, MOOE and more, school by school and across the cluster.</p>
+<div class="cta"><a href="#" class="btn amb big go-login">Sign in</a><button class="btn w big demo-only" data-demo="psds">Preview PSDS dashboard</button><button class="btn w big demo-only" data-demo="school_head">Preview school head encoder</button><button class="btn w big demo-only" data-demo="encoder">Preview encoder (assigned tabs only)</button></div></div></div>
+<div class="glance"><div class="rv"><h2>See the whole cluster at a glance</h2><p>Headline figures, school rankings and trends update the moment a school head saves.</p></div><div class="mock" aria-hidden="true"><div class="row"><div>Enrolled<b class="cu">12480</b></div><div>Cluster GSA<b class="cu">86.4</b></div><div>MOOE used<b class="cu">62%</b></div></div>
+<div class="bars"><s style="--h:38%;animation-delay:0ms,1600ms"></s><s style="--h:52%;animation-delay:90ms,1900ms"></s><s style="--h:46%;animation-delay:180ms,2200ms"></s><s style="--h:70%;animation-delay:270ms,2500ms"></s><s style="--h:64%;animation-delay:360ms,2800ms"></s><s style="--h:82%;animation-delay:450ms,3100ms"></s><s style="--h:74%;animation-delay:540ms,3400ms"></s><s style="--h:90%;animation-delay:630ms,3700ms"></s><s style="--h:68%;animation-delay:720ms,4000ms"></s></div></div></div>
+<div class="strip"><div class="rv"><b class="cu">26</b>encoding tabs for school heads</div><div class="rv"><b class="cu">3</b>school years of PMES and completion trends</div><div class="rv"><b class="cu">1</b>login for every school</div><div class="rv"><b class="cu">2</b>roles: school head encodes, PSDS monitors</div></div>
+<section class="sec"><h2 class="rv">What the cluster office can see</h2><p class="rv">Every figure is filtered by school or combined for the whole cluster.</p><div class="fg">
+<div class="rv"><h3>Learners and enrolment</h3><p>Enrolment for the previous and current school year, plus IP learners and CCT beneficiaries per grade level and gender.</p></div>
+<div class="rv"><h3>Personnel and positions</h3><p>Staff per department, the distribution of positions, and a personnel roster with birthdate, employment status, years in service and years since the last promotion.</p></div>
+<div class="rv"><h3>Teacher performance in PMES</h3><p>Teacher ratings from Outstanding to Poor for the last three school years, school by school.</p></div>
+<div class="rv"><h3>Performance indicators</h3><p>Simple dropout, repetition, graduation, completion and promotion rates, previous school year against current.</p></div>
+<div class="rv"><h3>GSA and MPS</h3><p>Pulled straight from each school’s Project COMPASS: per subject, per learning area, per exam.</p></div>
+<div class="rv"><h3>MOOE and GAD</h3><p>Allocation and utilization per quarter, with balance, percent used and the GAD allocation or attribution.</p></div>
+<div class="rv"><h3>OK sa DepEd</h3><p>BMI, Gulayan sa Paaralan, canteen, reproductive health and zero single-use plastic, school by school.</p></div>
+<div class="rv"><h3>Project HANDA</h3><p>Mock NAT results for Grades 10 and 12, previous against current school year, with school rankings and the top 10 learners in the Cluster Mock Test.</p></div>
+<div class="rv"><h3>Reading, ARAL and operations</h3><p>Phil-IRI reading levels, ARAL Basic and ARAL Plus progress, key school operations, SGC preparedness, PTA participation, land ownership and metal detectors.</p></div>
+<div class="rv"><h3>Innovations and technical assistance</h3><p>Each school’s best practices, and the Pakig-AMBIT, Project BISITA and PSDS monitoring received since SY 2024-2025.</p></div>
+<div class="rv"><h3>ALS, SNED and SLAC</h3><p>ALS Junior and Senior High School enrollees, SNED learners per school by grade level, category and gender, and School Learning Action Cell plans, approvals and sessions.</p></div></div></section>
+<section class="sec" style="padding-top:0"><h2 class="rv">How it works</h2><div class="fg steps">
+<div class="rv"><h3>The PSDS office adds schools</h3><p>Enter each school’s name and school ID, then issue its login.</p></div>
+<div class="rv"><h3>School heads encode</h3><p>Each head signs in and fills in only their own school. COMPASS sends scores automatically.</p></div>
+<div class="rv"><h3>The PSDS monitors</h3><p>Open the dashboard to compare schools, spot gaps and print reports.</p></div></div></section>
+<div class="band"><h2 class="rv">Ready to look at the whole cluster?</h2><a href="#" class="btn amb big go-login">Sign in</a></div></div>
+<div id="login" hidden><div class="hero"><img class="logo sm" src="logo.png" alt=""><h1><span class="c9">Cluster 9</span> <span class="tn">TANAW</span></h1><div class="acr"><b>T</b>racking and <b>A</b>nalysis of <b>N</b>eeded <b>A</b>cademic and <b>W</b>orkforce Data</div><div class="tagline">One click. Clear insights. Better guiding decisions toward Security, Harmony, and Excellence.</div><p>Every school’s numbers, encoded by its head and read by the PSDS, from one vantage point.</p></div>
+<form class="lf" id="lf"><h2>Sign in</h2><label for="u">Username or email</label><input id="u" autocomplete="username" required>
+<label for="p">Password</label><input id="p" type="password" autocomplete="current-password" required>
+<div class="err" id="le" role="alert"></div><button class="btn">Sign in</button><p><a href="#" id="bk">Back to home</a></p></form></div>
+<div id="app" hidden><div id="demo" hidden>Preview mode: sample data, nothing is saved.</div><header><img class="hl" src="logo.png" alt="" width="38" height="38"><h2>Cluster 9 TANAW <small style="font-weight:400;font-size:12px">Tracking and Analysis of Needed Academic and Workforce Data • Office of the PSDS</small></h2>
+<select id="fs" aria-label="School"></select><select id="sy" aria-label="School year"></select>
+<button class="btn alt sm" onclick="print()">Print</button><button class="btn alt sm" id="lo">Sign out</button></header>
+<nav id="nav"></nav><main id="main"></main></div>
+<footer><div class="fl"><img src="logo.png" alt="" width="68" height="68"><div><div class="ft">Cluster 9, <em>Rise and Shine</em></div><div><b>Cluster 9 TANAW</b> • Tracking and Analysis of Needed Academic and Workforce Data • Office of the Public Schools District Supervisor, Schools Division of Davao City</div>
+<div>Developed by <b>Carlo Jay P. Dagohoy</b>, Master Teacher I, Maria Cristina P. Belcar Agricultural High School.</div>
+<div>With sincere thanks to the school heads and teachers of Cluster 9 whose data makes this dashboard possible.</div></div></div></footer>
+<script>
+Chart.register(ChartDataLabels);Chart.defaults.font.family='"IBM Plex Sans",system-ui,sans-serif';Chart.defaults.font.size=12;Chart.defaults.color='#4a3338';Chart.defaults.plugins.datalabels.display=false;
+const C=window.TANAW_CONFIG,DEMO=/YOUR-/.test(C.SUPABASE_URL),sb=DEMO?null:supabase.createClient(C.SUPABASE_URL,C.SUPABASE_ANON);
+const $=s=>document.querySelector(s),esc=v=>String(v??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const GR=['K',...Array.from({length:12},(_,i)=>String(i+1))],DEPT={Elementary:['K','1','2','3','4','5','6'],JHS:['7','8','9','10'],SHS:['11','12']};
+const SYS=['2025-2026','2026-2027','2027-2028'],PAL=['#7a1f2b','#d9a21b','#b5495b','#d63a2f','#6b3a5b','#c46a4a','#3f7f7a','#8c6d3f','#d98ca0','#4a5568'];
+const gl=g=>g==='K'?'Kindergarten':'Grade '+g,dOf=g=>g==='K'||+g<=6?'Elementary':+g<=10?'JHS':'SHS';
+const SX=['M','F'],pair=(p,l)=>SX.map(s=>[p+'_'+s,l+' '+(s==='M'?'Male':'Female')]);
+const rateRows=sy=>{const y=+sy.slice(0,4);return[3,2,1,0].map(i=>`${y-i}-${y-i+1}`)};
+const prevSY=sy=>{const y=+sy.slice(0,4);return`${y-1}-${y}`},pmesRows=sy=>{const y=+sy.slice(0,4);return[3,2,1].map(i=>`${y-i}-${y-i+1}`)};
+const RM=['I','II','III','IV','V','VI','VII'],rg=(p,a,b)=>RM.slice(a-1,b).map(x=>p+' '+x);
+const POSG=[['Teacher I–III',rg('Teacher',1,3)],['Teacher IV–VII',rg('Teacher',4,7)],['Master Teacher',rg('Master Teacher',1,5)],['Head Teacher',rg('Head Teacher',1,6)],['Principal',rg('Principal',1,4)],['Administrative Assistant',rg('Administrative Assistant',1,3)],['Administrative Officer',rg('Administrative Officer',1,5)],['Project Development Officer',rg('Project Development Officer',1,3)],
+ ['Other non-teaching',['Administrative Aide (I–VI)','Registrar','Librarian','School Nurse','School Dentist','Guidance Counselor / Associate','Engineer','Accountant','Cashier / Disbursing Officer','Security guard / utility (non-plantilla)','Other non-teaching (not listed)']]],POS=POSG.flatMap(g=>g[1]);
+const PST=['Permanent','Probationary','Temporary','Substitute','Local School Board (LSB) appointee','Contract of Service','Job Order','Others'];
+const dmo=(a,b)=>{if(!a||!b)return null;const x=new Date(a+'T00:00:00'),y=b instanceof Date?b:new Date(b+'T00:00:00');if(isNaN(x)||isNaN(y)||y<x)return null;let m=(y.getFullYear()-x.getFullYear())*12+y.getMonth()-x.getMonth();if(y.getDate()<x.getDate())m--;return Math.max(m,0)},
+ fym=m=>m==null?'—':`${Math.floor(m/12)} yr${Math.floor(m/12)===1?'':'s'} ${m%12} mo`,
+ fdt=d=>d?new Date(d+'T00:00:00').toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric'}):'—';
+const SGCI=['SGC organized and reconstituted for the school year','SGC members oriented on their roles and functions','SGC meetings scheduled at least quarterly','SGC involved in preparing the SIP and AIP','SGC minutes and resolutions on file'],
+ PTR=['PTA general assembly attendance (% of parents)','PTA meetings held','PTA contributions and projects (₱)','Metal detectors owned: walk-through','Metal detectors owned: hand-held','Metal detectors functional (total)'],
+ OWN=['Land title (Torrens, OCT or TCT)','Usufruct agreement','Deed of donation','Deed of sale','Proclamation or executive reservation','Lease or contract of lease','Other ownership document','No ownership document yet'],
+ TAT=[['ambit','Pakig-AMBIT (Division Office)'],['bisita','Project BISITA (Cluster Office)'],['psds','Regular PSDS monitoring']],
+ INC=['Curriculum and instruction','Learning recovery and intervention','Technology and digital learning','School management and governance','Health, nutrition and environment','Community and partnerships','Livelihood, TLE and agri-fishery','Learner support and wellbeing','Others'],
+ TAY=()=>{const y=+SY.slice(0,4),a=[];for(let i=2024;i<=y;i++)a.push(`${i}-${i+1}`);return a};
+const HS_DEF=['English','Filipino','Mathematics','Science','Araling Panlipunan'],HS={'10':[...HS_DEF],'12':[...HS_DEF]},HROWS=[];
+/* Mock NAT subjects are editable by the PSDS (table handa_subjects). These defaults apply until the PSDS saves a list. */
+function rebuildH(){HROWS.length=0;['10','12'].forEach(g=>HS[g].forEach(x=>HROWS.push([g+'|'+x,'Grade '+g+' – '+x])))}
+function setSubjects(rows){['10','12'].forEach(g=>{const L=(rows||[]).filter(r=>r.grade===g).sort((a,b)=>a.sort-b.sort).map(r=>r.subject);HS[g]=L.length?L:[...HS_DEF]});rebuildH()}
+rebuildH();
+/* SNED categories are editable by the PSDS in Schools & logins (table sned_categories). Ids are permanent; only names change. These defaults apply until a list is saved. */
+const SNC_DEF=[['asd','Autism spectrum disorder'],['speech','Speech / language disorder'],['ebd','Emotional-behavioral disorder'],['hearing','Hearing impairment'],['visual','Visual impairment'],['intellectual','Intellectual disability'],['ld','Learning disability'],['ortho','Orthopedic / physical disability'],['cp','Cerebral palsy'],['health','Special health problem / chronic disease'],['multiple','Multiple disabilities'],['cancer','Cancer'],['others','Others']],SNC=SNC_DEF.map(x=>[...x]);
+function setSned(rows){SNC.length=0;(rows&&rows.length?[...rows].sort((a,b)=>a.sort-b.sort).map(r=>[r.id,r.name]):SNC_DEF).forEach(x=>SNC.push([...x]))}
+const GUL=['Garden area (sq m)','Learners participating','Teachers and staff participating','Vegetable varieties planted','Total harvest (kg)','Harvest used for feeding or canteen (kg)','Income from harvest sold (₱)'],
+ CAN=['Canteen operating (1=yes,0=no)','Learners served daily','Items sold: Green (healthy)','Items sold: Yellow (select carefully)','Items sold: Red (not allowed)','Canteen income (₱)'],
+ RHR=['Learners reached by RH/CSE sessions: male','Learners reached by RH/CSE sessions: female','Sessions conducted','Teachers trained on RH/CSE','Learners who are pregnant or parents'],
+ ZSP=['Zero single-use plastic policy adopted (1=yes,0=no)','Plastic-free canteen (1=yes,0=no)','Segregation and MRF facilities functional (1=yes,0=no)','Learners using reusables (%)','Plastic collected or recycled (kg)','Ecobricks made (pieces)'],
+ ACT=['Literacy|Basic','Literacy|Plus','Numeracy|Basic','Numeracy|Plus'],ACL=['Literacy – ARAL Basic','Literacy – ARAL Plus','Numeracy – ARAL Basic','Numeracy – ARAL Plus'];
+const MODS={
+ learners:{t:'Learners',rows:()=>GR.map(g=>[g,gl(g)]),cols:[...pair('enr','Enrolled'),...pair('ip','IP'),...pair('cct','CCT')]},
+ enrol:{t:'Enrolment (Previous & Current SY)',virtual:1,note:'Enter enrolment for the previous and the current school year side by side. Saving updates the Learners records of both years.',rows:()=>GR.map(g=>[g,gl(g)]),cols:[['prev_M','Previous SY Male'],['prev_F','Previous SY Female'],['cur_M','Current SY Male'],['cur_F','Current SY Female']],
+  get:(r,c)=>{const[p,x]=c.split('_');return(p==='cur'?D:DP)[school.id]?.learners?.[r]?.['enr_'+x]},
+  save:ins=>ins.map(i=>{const[p,x]=i.dataset.c.split('_');return{school_id:school.id,sy:p==='cur'?SY:prevSY(SY),module:'learners',row_key:i.dataset.r,col_key:'enr_'+x,value:i.value===''?null:+i.value,updated_at:new Date().toISOString()}})},
+ personnel:{t:'Personnel',rows:()=>['Elementary','JHS','SHS'].flatMap(d=>['Teaching','Non-teaching'].map(c=>[d+'|'+c,(d==='JHS'?'Junior High':d==='SHS'?'Senior High':d)+' – '+c])),cols:[['M','Male'],['F','Female']]},
+ roster:{t:'Personnel roster',virtual:1,custom:'roster',rows:()=>[],cols:[]},
+ positions:{t:'Positions',note:'Number of personnel per position, by gender. Leave positions with none blank.',rows:()=>POS.map(p=>[p,p]),cols:[['M','Male'],['F','Female']]},
+ pmes:{t:'Teacher PMES',note:'Number of teachers per PMES rating for each of the last three school years.',rows:sy=>pmesRows(sy).map(r=>[r,'SY '+r]),cols:[['o','Outstanding'],['vs','Very Satisfactory'],['s','Satisfactory'],['u','Unsatisfactory'],['p','Poor']]},
+ rates:{t:'Performance indicators (%)',note:'Rates in percent. The last two rows (previous and current SY) drive the previous-versus-current comparison.',rows:sy=>rateRows(sy).map(r=>[r,'SY '+r]),cols:[['completion','Completion rate'],['dropout','Simple dropout rate'],['repetition','Repetition rate'],['graduation','Graduation rate'],['promotion','Promotion rate']]},
+ mooe:{t:'MOOE & GAD (₱)',note:'GAD rows: the amount of MOOE allocated or attributed to Gender and Development, and its utilization per quarter.',rows:()=>[['Allocation','Allocation'],['Q1','Q1 utilization'],['Q2','Q2 utilization'],['Q3','Q3 utilization'],['Q4','Q4 utilization'],['GAD','GAD allocation / attribution'],['GAD_Q1','GAD Q1 utilization'],['GAD_Q2','GAD Q2 utilization'],['GAD_Q3','GAD Q3 utilization'],['GAD_Q4','GAD Q4 utilization']],cols:[['amt','Amount']]},
+ bmi:{t:'OK sa DepEd • BMI',rows:()=>[['Baseline','Baseline'],['Endline','Endline']],cols:[['sw','Severely wasted'],['w','Wasted'],['n','Normal'],['ow','Overweight'],['ob','Obese']]},
+ gulayan:{t:'OK sa DepEd • Gulayan sa Paaralan',note:'School vegetable garden for the school year.',rows:()=>GUL.map(x=>[x,x]),cols:[['v','Value']]},
+ canteen:{t:'OK sa DepEd • Canteen',note:'Count the items on the canteen menu by food color class. For yes/no rows type 1 for yes, 0 for no.',rows:()=>CAN.map(x=>[x,x]),cols:[['v','Value']]},
+ rh:{t:'OK sa DepEd • Reproductive Health',note:'Counts only; no learner names.',rows:()=>RHR.map(x=>[x,x]),cols:[['v','Value']]},
+ zsup:{t:'OK sa DepEd • Zero Single-Use Plastic',note:'For yes/no rows type 1 for yes, 0 for no.',rows:()=>ZSP.map(x=>[x,x]),cols:[['v','Value']]},
+ philiri:{t:'Phil-IRI',rows:()=>GR.slice(1,11).map(g=>[g,gl(g)]),cols:[['pre_f','Pre Frustration'],['pre_i','Pre Instructional'],['pre_n','Pre Independent'],['post_f','Post Frustration'],['post_i','Post Instructional'],['post_n','Post Independent']]},
+ aral:{t:'ARAL tutors & totals',rows:()=>[['Literacy','Literacy'],['Numeracy','Numeracy']],cols:[['learners','Learners'],['tutors','Tutors']]},
+ aral2:{t:'ARAL categories & progress',note:'Per subject and ARAL category: learners enrolled, how many improved or met the target, and the pre-test and post-test mean scores (%).',rows:()=>ACT.map((k,i)=>[k,ACL[i]]),cols:[['learners','Learners enrolled'],['improved','Learners who improved'],['met','Learners who met the target'],['pre','Pre-test mean (%)'],['post','Post-test mean (%)']]},
+ ops:{t:'Operations',rows:()=>['Classrooms (total)','Classrooms needing repair','Seat shortage','Textbook shortage','Teacher vacancies','Toilets (functional)','Computers (functional)','Learners with internet access (%)','Electricity (1=yes,0=no)','Potable water (1=yes,0=no)'].map(x=>[x,x]),cols:[['v','Value']]},
+ sgc:{t:'Operations • SGC preparedness',check:1,note:'Tick each item the School Governing Council has accomplished for the school year.',rows:()=>SGCI.map(x=>[x,x]),cols:[['v','Done']]},
+ pta:{t:'Operations • PTA & metal detectors',note:'PTA attendance is the percent of parents at the general assembly. Metal detectors: count what the school owns and how many work.',rows:()=>PTR.map(x=>[x,x]),cols:[['v','Value']]},
+ own:{t:'Operations • School ownership & land area',static:1,virtual:1,note:'Enter the land area in square meters covered by each kind of ownership document; leave the others blank. This is saved once and carries over to every school year.',rows:()=>OWN.map(x=>[x,x]),cols:[['v','Land area (sq m)']]},
+ innov:{t:'Innovations & best practices',virtual:1,custom:'innov',rows:()=>[],cols:[]},
+ ta:{t:'Technical assistance received',virtual:1,check:1,note:'Tick each school year in which the school received the assistance, starting SY 2024-2025.',rows:()=>TAT.map(([k,l])=>[k,l]),get cols(){return TAY().map(y=>[y,'SY '+y])},
+  get:(r,c)=>TAD[school.id]?.[c]?.[r]?.v,
+  save:ins=>ins.map(i=>({school_id:school.id,sy:i.dataset.c,module:'ta',row_key:i.dataset.r,col_key:'v',value:i.checked?1:0,updated_at:new Date().toISOString()}))},
+ als:{t:'ALS enrollees',rows:()=>[['JHS','ALS Junior High School'],['SHS','ALS Senior High School']],cols:[['M','Male'],['F','Female']]},
+ sned:{t:'SNED learners',note:'Learners with disabilities (SNED) per grade level and gender, one column per category. Count each learner once, under the main category. Leave cells with none blank. Grade levels follow the school’s departments.',rows:()=>GR.flatMap(g=>['M','F'].map(x=>[g+'|'+x,gl(g)+' – '+(x==='M'?'Male':'Female')])),get cols(){return SNC.map(([id,nm])=>[id,esc(nm)])}},
+ slac:{t:'SLAC (LAC plan & sessions)',virtual:1,custom:'slac',rows:()=>[],cols:[]},
+ handa:{hidden:1,t:'HANDA',rows:()=>HROWS,cols:[['mps','MPS'],['n','Examinees']]},
+ handaenc:{t:'Project HANDA • Mock NAT',virtual:1,note:'Mean percentage score (MPS) and number of examinees per subject, previous and current school year side by side. Grade 10 needs a JHS department and Grade 12 an SHS department.',rows:()=>HROWS,cols:[['prev_mps','Previous SY MPS'],['prev_n','Previous SY Examinees'],['cur_mps','Current SY MPS'],['cur_n','Current SY Examinees']],
+  get:(r,c)=>{const[p,x]=c.split('_');return(p==='cur'?D:DP)[school.id]?.handa?.[r]?.[x]},
+  save:ins=>ins.map(i=>{const[p,x]=i.dataset.c.split('_');return{school_id:school.id,sy:p==='cur'?SY:prevSY(SY),module:'handa',row_key:i.dataset.r,col_key:x,value:i.value===''?null:+i.value,updated_at:new Date().toISOString()}})},
+ handatop:{t:'Project HANDA • Top 10 learners',virtual:1,custom:1,rows:()=>[],cols:[]}
+};
+let TOP=[],topErr='',subjErr='',snedErr='',ENC=[],teamSch=null,teamEdit=null,subjOpen=false,hgSel='All',PERS=[],persErr='',DS={},TAD={},INN=[],innErr='',LACP=[],LACS=[],lacErr='';
+let me,school,schools=[],SY=SYS[1],D={},DP={},GSA=[],MPS=[],Q=[],charts=[],sec='overview';
+const v=(s,m,r,c)=>D[s]?.[m]?.[r]?.[c],n=x=>x==null?0:+x,f=(x,d=0)=>x==null||isNaN(x)?'—':(+x).toLocaleString('en-PH',{maximumFractionDigits:d,minimumFractionDigits:d});
+const mean=a=>{a=a.filter(x=>x!=null&&!isNaN(x));return a.length?a.reduce((p,q)=>p+q,0)/a.length:null};
+let S=[];const T=(m,r,c)=>S.reduce((a,s)=>a+n(v(s.id,m,r,c)),0);
+const gcls=x=>x==null?'':x>=90?'adv':x>=85?'pro':x>=80?'app':x>=75?'dev':'beg',mcls=x=>x==null?'':x>=96?'adv':x>=86?'pro':x>=66?'app':x>=35?'dev':'beg';
+const ov=r=>mean([r.st1,r.st2,r.exam]);
+async function all(q){let o=0,out=[];for(;;){const{data,error}=await q().range(o,o+999);if(error)throw error;out.push(...data);if(data.length<1000)break;o+=1000}return out}
+async function load(){
+ if(DEMO)return;
+ schools=(await all(()=>sb.from('schools').select('*').order('name')));
+ D={};DP={};DS={};(await all(()=>sb.from('cluster_data').select('*').in('sy',[SY,prevSY(SY),'static']).order('school_id').order('sy').order('module').order('row_key').order('col_key'))).forEach(r=>{const X0=r.sy==='static'?DS:r.sy===SY?D:DP;(((X0[r.school_id]??={})[r.module]??={})[r.row_key]??={})[r.col_key]=r.value});
+ try{setSned(await all(()=>sb.from('sned_categories').select('*').order('sort').order('id')));snedErr=''}catch(e){setSned([]);snedErr=e.message||'sned_categories table not found'}
+ try{setSubjects(await all(()=>sb.from('handa_subjects').select('*').order('grade').order('sort').order('subject')));subjErr=''}catch(e){setSubjects([]);subjErr=e.message||'handa_subjects table not found'}
+ try{TOP=await all(()=>sb.from('handa_learners').select('*').eq('sy',SY).order('score',{ascending:false}).order('id'));topErr=''}catch(e){TOP=[];topErr=e.message||'handa_learners table not found'}
+ try{TAD={};(await all(()=>sb.from('cluster_data').select('*').eq('module','ta').order('school_id').order('sy').order('row_key').order('col_key'))).forEach(r=>{(((TAD[r.school_id]??={})[r.sy]??={})[r.row_key]??={})[r.col_key]=r.value})}catch(e){TAD={}}
+ try{INN=await all(()=>sb.from('school_innovations').select('*').order('created_at').order('id'));innErr=''}catch(e){INN=[];innErr=e.message||'school_innovations table not found'}
+ try{LACP=await all(()=>sb.from('lac_plans').select('*').eq('sy',SY).order('school_id'));LACS=await all(()=>sb.from('lac_sessions').select('*').eq('sy',SY).order('date_implemented').order('id'));lacErr=''}catch(e){LACP=[];LACS=[];lacErr=e.message||'lac tables not found'}
+ try{ENC=await all(()=>sb.from('profiles').select('*').eq('role','encoder').order('full_name'))}catch(e){ENC=[]}
+ try{PERS=await all(()=>sb.from('personnel_roster').select('*').order('full_name').order('id'));persErr=''}catch(e){PERS=[];persErr=e.message||'personnel_roster table not found'}
+ GSA=await all(()=>sb.from('compass_gsa').select('*').eq('sy',SY));MPS=await all(()=>sb.from('compass_mps').select('*').eq('sy',SY));
+}
+const wrapT=l=>{const out=[];let cur='';l.split(' ').forEach(x=>{if((cur+' '+x).trim().length>13&&cur){out.push(cur);cur=x}else cur=(cur+' '+x).trim()});out.push(cur);return out};
+const shortN=(t,k=32)=>t.length>k?t.slice(0,k-1)+'…':t;
+function ch(title,sub,type,labels,sets,o={}){const id='c'+Q.length,H=!!o.h,st=!!o.stack,dn=type==='doughnut',rd=type==='radar',ln=type==='line';
+ const per=st?1:sets.length,ht=o.ht||(H?Math.max(300,labels.length*(per*20+18)+100):340);
+ const fv=x=>o.fmt?o.fmt(x):o.pct?f(x,1)+'%':f(x,o.dec||0);
+ let thr=0,thrD=dn?sets[0].d.reduce((x,y)=>x+n(y),0)*.04:0;if(st){thr=Math.max(...labels.map((_,i)=>sets.reduce((a,s)=>a+n(s.d[i]),0)),1)*.06}
+ const run=()=>charts.push(new Chart(document.getElementById(id),{type:H?'bar':type,
+  data:{labels,datasets:sets.map((s,i)=>{const c=s.c||PAL[i%PAL.length];return{label:s.l,data:s.d,backgroundColor:dn?(o.colors||PAL):(o.colors&&sets.length===1)?o.colors:ln?c+'1f':rd?c+'33':c,borderColor:dn?'#fff':c,borderWidth:dn?2:(ln||rd)?(s.w||2.5):0,borderRadius:(dn||ln||rd)?0:4,borderSkipped:false,tension:.35,pointRadius:(ln||rd)?(s.w&&s.w<2?2:4):0,pointBackgroundColor:c,fill:rd,spanGaps:true,datalabels:s.nolab?{display:false}:undefined}})},
+  options:{indexAxis:H?'y':'x',responsive:true,maintainAspectRatio:false,cutout:dn?'60%':undefined,layout:{padding:{top:20,right:(H&&!st)?46:12}},
+   animation:{duration:1200,easing:'easeOutQuart',delay:c=>c.type==='data'&&c.mode==='default'?c.dataIndex*70+c.datasetIndex*130:0},
+   scales:dn?{}:rd?{r:{beginAtZero:o.min==null,suggestedMin:o.min,max:o.max,ticks:{backdropColor:'transparent'},pointLabels:{font:{size:12}}}}:{
+    [H?'y':'x']:{stacked:st,grid:{display:false},ticks:{autoSkip:false,callback:function(val){const l=String(this.getLabelForValue(val));return H?shortN(l):wrapT(l)}}},
+    [H?'x':'y']:{stacked:st,beginAtZero:o.min==null,min:o.min,max:o.max,grid:{color:'#eddfe1'},title:{display:!!o.yt,text:o.yt},ticks:{callback:x=>o.pct?x+'%':o.fmt?o.fmt(x):x}}},
+   plugins:{legend:{display:sets.length>1||dn,position:'bottom',labels:{usePointStyle:true,boxWidth:9,padding:16}},
+    tooltip:{padding:10,callbacks:{title:i=>i[0].label.toString().replace(/,/g,' '),label:c=>' '+(c.dataset.label&&!dn?c.dataset.label+': ':'')+fv(dn?c.parsed:H?c.parsed.x:(c.parsed.y??c.parsed.r))}},
+    datalabels:o.lab===false?{display:false}:{display:c=>{const x=c.dataset.data[c.dataIndex];return x!=null&&(st?x>=thr&&x>0:dn?x>0&&x>=thrD:true)},color:(st||dn)?'#fff':'#2b1216',anchor:(st||dn)?'center':'end',align:(st||dn)?'center':H?'end':'top',clamp:true,offset:(st||dn)?0:2,font:{weight:600,size:11},formatter:fv}}},
+  plugins:[{id:'tl',afterDatasetsDraw(c){if(!o.tg)return;const{ctx,chartArea:a}=c,p=(H?c.scales.x:c.scales.y).getPixelForValue(o.tg.v);ctx.save();ctx.strokeStyle='#d63a2f';ctx.fillStyle='#d63a2f';ctx.setLineDash([6,4]);ctx.lineWidth=1.5;ctx.beginPath();if(H){ctx.moveTo(p,a.top);ctx.lineTo(p,a.bottom)}else{ctx.moveTo(a.left,p);ctx.lineTo(a.right,p)}ctx.stroke();ctx.setLineDash([]);ctx.font='600 11px sans-serif';ctx.fillText(o.tg.t,H?Math.min(p+4,a.right-110):a.left+4,H?a.top+10:p-5);ctx.restore()}}]}));
+ Q.push({id,run});
+ return`<div class="card ${o.wide?'wide':''}"><h3>${title}</h3>${sub?`<div class="sub">${sub}</div>`:''}<div class="cv" style="height:${ht}px"><canvas id="${id}" role="img" aria-label="${esc(title)}"></canvas></div></div>`}
+function lazy(){if(window.io2)io2.disconnect();window.io2=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){const q=Q.find(x=>x.id===e.target.id);q&&q.run();io2.unobserve(e.target)}}),{threshold:.1});Q.forEach(q=>io2.observe(document.getElementById(q.id)))}
+function tbl(title,head,rows,note){return`<div class="card wide"><h3>${title}</h3>${note?`<div class="note">${note}</div>`:''}<div class="tw"><table><thead><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((c,i)=>`<td${i?' class="n"':''}>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`}
+const kp=a=>`<div class="kp">${a.map(([b,l])=>`<div><b>${b}</b><span>${l}</span></div>`).join('')}</div>`;
+const sumG=(s,m,p,rows)=>rows.reduce((a,r)=>a+n(v(s,m,r,p)),0);
+const gsaOf=s=>mean(GSA.filter(x=>x.school_id===s).map(x=>x.value)),mpsOf=s=>mean(MPS.filter(x=>x.school_id===s).map(ov));
+const subj=(arr,fn)=>{const m={};arr.forEach(x=>{(m[x.subject]??=[]).push(fn(x))});return m};
+/* Encoder accounts: each encoder sees only the tabs assigned to them. The database enforces the same limits (supabase_update_accounts.sql). */
+const ESEC={learners:'learners',enrol:'learners',personnel:'personnel',roster:'personnel',positions:'positions',pmes:'pmes',rates:'rates',mooe:'mooe',bmi:'okdeped',gulayan:'okdeped',canteen:'okdeped',rh:'okdeped',zsup:'okdeped',philiri:'philiri',aral:'aral',aral2:'aral',ops:'ops',sgc:'ops',pta:'ops',own:'ops',innov:'innov',ta:'ta',als:'als',sned:'sned',slac:'slac',handaenc:'handa',handatop:'handa'},
+ allowedE=k=>me.role!=='encoder'||(me.tabs||[]).includes(ESEC[k]);
+const COL={M:'#b5495b',F:'#d9a21b'},TOT=Object.values(MODS).filter(m=>!m.virtual).length+1;let sjSel='All';
+const srt=(fn,asc)=>{const a=S.map(s=>({s,x:fn(s)}));a.sort((p,q)=>((p.x==null)-(q.x==null))||(asc?p.x-q.x:q.x-p.x));return{L:a.map(e=>e.s.name),X:a.map(e=>e.x),S:a.map(e=>e.s)}};
+const enrS=s=>sumG(s.id,'learners','enr_M',GR)+sumG(s.id,'learners','enr_F',GR),tchS=(s,x)=>['Elementary','JHS','SHS'].reduce((a,d)=>a+n(v(s.id,'personnel',d+'|Teaching',x)),0);
+const pc=(a,b)=>b?a/b*100:null,gcol=x=>x==null?'#a89a9c':x>=90?'#2e7d5b':x>=85?'#3f7f7a':x>=80?'#6b3a5b':x>=75?'#d9a21b':'#d63a2f',mcol=x=>x==null?'#a89a9c':x>=96?'#2e7d5b':x>=86?'#3f7f7a':x>=66?'#6b3a5b':x>=35?'#d9a21b':'#d63a2f';
+const heat=(x,lo,hi,inv,d=2)=>{if(x==null||isNaN(x))return'—';let t=Math.max(0,Math.min(1,(x-lo)/(hi-lo)));if(inv)t=1-t;return`<span style="background:hsl(${t*115},62%,86%);padding:2px 7px;border-radius:4px">${f(x,d)}</span>`};
+const avgL=(arr,t)=>{const m=mean(arr);return m==null?null:{v:m,t:t+' '+f(m,1)}};
+const ring=(p,l)=>`<div class="rg"><div class="ring" style="--t:${Math.round(Math.max(0,Math.min(100,p||0)))}"><b>${p==null?'—':f(p,0)+'%'}</b></div><span>${l}</span></div>`;
+const modsDone=s=>Object.keys(MODS).filter(m=>!MODS[m].virtual&&D[s.id]?.[m]&&Object.values(D[s.id][m]).some(r=>Object.values(r).some(x=>x!=null))).length+(GSA.some(x=>x.school_id===s.id)?1:0);
+const by=(arr,p)=>arr.map(s=>sumG(s.id,'learners',p,GR));
+function enrolCmp(){const py=prevSY(SY),vp=(s,r,c)=>DP[s]?.learners?.[r]?.[c],pv=s=>GR.reduce((a,g)=>a+n(vp(s.id,g,'enr_M'))+n(vp(s.id,g,'enr_F')),0),
+ pS=(x)=>S.reduce((a,s)=>a+GR.reduce((b,g)=>b+n(vp(s.id,g,'enr_'+x)),0),0),cS=(x)=>GR.reduce((a,g)=>a+T('learners',g,'enr_'+x),0),
+ pM=pS('M'),pF=pS('F'),cM=cS('M'),cF=cS('F'),pT=pM+pF,cT=cM+cF,sg=x=>(x>=0?'+':'')+f(x),
+ curG=g=>T('learners',g,'enr_M')+T('learners',g,'enr_F'),prvG=g=>S.reduce((a,s)=>a+n(vp(s.id,g,'enr_M'))+n(vp(s.id,g,'enr_F')),0),
+ e=srt(enrS),gc=srt(s=>pv(s)?(enrS(s)-pv(s))/pv(s)*100:null);
+ return kp([[f(pT),'enrolled, SY '+py],[f(cT),'enrolled, SY '+SY],[pT?sg(cT-pT):'—','change in learners'],[pT?(cT>=pT?'+':'')+f((cT-pT)/pT*100,1)+'%':'—','growth vs previous SY'],[f(cM)+' / '+f(cF),'male / female, SY '+SY]])
+ +ch('Enrolment per grade level: previous vs current school year','Whole cluster','bar',GR.map(gl),[{l:'SY '+py,d:GR.map(prvG),c:'#a89a9c'},{l:'SY '+SY,d:GR.map(curG),c:'#7a1f2b'}],{wide:1,ht:380})
+ +ch('Enrolment per school: previous vs current','Largest current enrolment first','bar',e.L,[{l:'SY '+py,d:e.S.map(pv),c:'#a89a9c'},{l:'SY '+SY,d:e.S.map(enrS),c:'#7a1f2b'}],{h:1})
+ +ch('Change in enrolment per school','Percent change from SY '+py+'; green is growth, red is decline','bar',gc.L,[{l:'Change',d:gc.X}],{h:1,pct:1,dec:1,colors:gc.X.map(x=>x==null?'#a89a9c':x>=0?'#2e7d5b':'#d63a2f')})
+ +tbl('Enrolment: previous vs current school year',['School',py+' M',py+' F',py+' total',SY+' M',SY+' F',SY+' total','Change','% change'],S.map(s=>{const a=GR.reduce((x,g)=>x+n(vp(s.id,g,'enr_M')),0),b=GR.reduce((x,g)=>x+n(vp(s.id,g,'enr_F')),0),c=sumG(s.id,'learners','enr_M',GR),d=sumG(s.id,'learners','enr_F',GR),p=a+b,q=c+d;return[esc(s.name),f(a),f(b),f(p),f(c),f(d),f(q),p?sg(q-p):'—',p?(q>=p?'+':'')+f((q-p)/p*100,1)+'%':'—']}),pT?'':'No enrolment has been encoded for the previous school year yet. School heads can add it under Encode data, Enrolment.')}
+function mooeKp(){const Qs=['Q1','Q2','Q3','Q4'],A=T('mooe','Allocation','amt'),U=Qs.reduce((a,q)=>a+T('mooe',q,'amt'),0),GA=T('mooe','GAD','amt'),GU=Qs.reduce((a,q)=>a+T('mooe','GAD_'+q,'amt'),0);
+ return kp([['₱'+f(A),'MOOE allocation'],[A?f(U/A*100,1)+'%':'—','MOOE utilized'],['₱'+f(GA),'GAD allocation / attribution'],[A?f(GA/A*100,1)+'%':'—','GAD share of MOOE'],[GA?f(GU/GA*100,1)+'%':'—','GAD utilized']])}
+function gadView(){const Qs=['Q1','Q2','Q3','Q4'],K=x=>f(x/1000)+'K',ga=s=>n(v(s.id,'mooe','GAD','amt')),gu=s=>Qs.reduce((x,q)=>x+n(v(s.id,'mooe','GAD_'+q,'amt')),0),al=s=>n(v(s.id,'mooe','Allocation','amt')),
+ sh=srt(s=>pc(ga(s),al(s))),ut=srt(s=>pc(gu(s),ga(s))),gx=srt(ga),qc=['#7a1f2b','#b5495b','#d9a21b','#6b3a5b'];
+ return ch('GAD allocation / attribution per school','Amounts in thousand pesos (K), largest first','bar',gx.L,[{l:'GAD allocation',d:gx.X,c:'#6b3a5b'}],{h:1,fmt:K})
+ +ch('GAD share of MOOE allocation','Percent of each school’s MOOE; the dashed line is the 5% GAD guideline','bar',sh.L,[{l:'GAD share',d:sh.X}],{h:1,pct:1,dec:1,min:0,colors:sh.X.map(x=>x==null?'#a89a9c':x>=5?'#2e7d5b':'#d9a21b'),tg:{v:5,t:'5% guideline'}})
+ +ch('GAD utilization per quarter, per school','Amounts in thousand pesos (K)','bar',S.map(s=>s.name),Qs.map((q,i)=>({l:q,d:S.map(s=>n(v(s.id,'mooe','GAD_'+q,'amt'))),c:qc[i]})),{h:1,stack:1,fmt:K,wide:1})
+ +ch('GAD utilization rate per school','Share of the GAD allocation already used','bar',ut.L,[{l:'Utilized',d:ut.X}],{h:1,pct:1,min:0,max:100,colors:ut.X.map(x=>x==null?'#a89a9c':x>=75?'#2e7d5b':x>=40?'#d9a21b':'#d63a2f'),tg:avgL(ut.X,'Cluster')})
+ +tbl('GAD allocation and utilization',['School','MOOE allocation','GAD allocation','GAD % of MOOE','GAD Q1','GAD Q2','GAD Q3','GAD Q4','GAD utilized','% utilized','GAD balance'],S.map(s=>[esc(s.name),f(al(s),2),f(ga(s),2),al(s)?heat(ga(s)/al(s)*100,0,8,0,1)+'%':'—',...Qs.map(q=>f(v(s.id,'mooe','GAD_'+q,'amt'),2)),f(gu(s),2),ga(s)?heat(gu(s)/ga(s)*100,20,90,0,1)+'%':'—',f(ga(s)-gu(s),2)]),'The 5% line is the commonly used GAD budget guideline. Amounts are what each school head encoded under MOOE & GAD.')}
+
+const sect=(t,sub)=>`<div class="card wide" style="border-left:4px solid var(--amb)"><h3 style="margin:0">${t}</h3>${sub?`<div class="sub" style="margin:4px 0 0">${sub}</div>`:''}</div>`,
+ vv=(s,m,r)=>v(s.id,m,r,'v'),sm1=(m,r)=>S.reduce((a,s)=>a+n(vv(s,m,r)),0),yn=(m,r)=>S.filter(s=>vv(s,m,r)==1).length,
+ ps=(title,sub,m,r,o={})=>{const e=srt(s=>vv(s,m,r));return ch(title,sub,'bar',e.L,[{l:r,d:e.X,c:o.c||'#7a1f2b'}],{h:1,...(o.o||{}),...(o.avg?{tg:avgL(e.X,'Cluster avg')}:{})})},
+ mt1=(title,m,rows,note)=>tbl(title,['School',...rows.map(r=>r.replace(/ \(1=yes,0=no\)/,''))],S.map(s=>[esc(s.name),...rows.map(r=>f(vv(s,m,r)))]),note);
+function okdExtra(){const G=GUL,C=CAN,R=RHR,Z=ZSP,gs=S.filter(s=>n(vv(s,'gulayan',G[0]))>0).length,ge=srt(s=>vv(s,'gulayan',G[4])),ce=srt(s=>['Green','Yellow','Red'].reduce((a,_,i)=>a+n(vv(s,'canteen',C[2+i])),0)),re=srt(s=>n(vv(s,'rh',R[0]))+n(vv(s,'rh',R[1]))),
+ zy=m=>S.length?yn('zsup',m)/S.length*100:null;
+ return sect('Gulayan sa Paaralan','School vegetable gardens: area, participation and harvest')
+ +kp([[gs+' / '+S.length,'schools with a garden'],[f(sm1('gulayan',G[0])),'sq m of garden'],[f(sm1('gulayan',G[1])),'learners participating'],[f(sm1('gulayan',G[4])),'kg harvested'],[f(sm1('gulayan',G[5])),'kg used for feeding or canteen'],['₱'+f(sm1('gulayan',G[6])),'income from harvest sold']])
+ +ps('Harvest per school (kg)','Largest first','gulayan',G[4],{c:'#2e7d5b',o:{wide:1}})
+ +ch('Harvest used for feeding or canteen vs total harvest','Kilograms per school, same order as above','bar',ge.L,[{l:'Total harvest',d:ge.S.map(s=>vv(s,'gulayan',G[4])),c:'#2e7d5b'},{l:'Used for feeding or canteen',d:ge.S.map(s=>vv(s,'gulayan',G[5])),c:'#d9a21b'}],{h:1})
+ +ps('Garden area per school (sq m)','Largest first','gulayan',G[0],{c:'#3f7f7a'})
+ +ps('Learners participating in the garden','Largest first','gulayan',G[1],{c:'#b5495b'})
+ +mt1('Gulayan sa Paaralan per school','gulayan',G)
+ +sect('Canteen','Operation and the food color classes sold')
+ +kp([[yn('canteen',C[0])+' / '+S.length,'schools with an operating canteen'],[f(sm1('canteen',C[1])),'learners served daily'],[f(sm1('canteen',C[2])),'green items'],[f(sm1('canteen',C[3])),'yellow items'],[f(sm1('canteen',C[4])),'red items (should be 0)'],['₱'+f(sm1('canteen',C[5])),'canteen income']])
+ +ch('Menu items by food color class, per school','Green is healthy, yellow select carefully, red not allowed','bar',ce.L,['Green','Yellow','Red'].map((k,i)=>({l:k,d:ce.S.map(s=>vv(s,'canteen',C[2+i])),c:['#2e7d5b','#d9a21b','#d63a2f'][i]})),{h:1,stack:1,wide:1})
+ +ch('Menu mix, whole cluster','Items sold by color class','doughnut',['Green','Yellow','Red'],[{l:'Items',d:[2,3,4].map(i=>sm1('canteen',C[i]))}],{colors:['#2e7d5b','#d9a21b','#d63a2f'],ht:340})
+ +ps('Canteen income per school (₱)','Largest first','canteen',C[5],{c:'#7a1f2b',o:{fmt:x=>f(x/1000)+'K'}})
+ +mt1('Canteen per school','canteen',C)
+ +sect('Reproductive Health','Learners reached, sessions and teacher training (counts only)')
+ +kp([[f(sm1('rh',R[0])),'male learners reached'],[f(sm1('rh',R[1])),'female learners reached'],[f(sm1('rh',R[2])),'sessions conducted'],[f(sm1('rh',R[3])),'teachers trained'],[f(sm1('rh',R[4])),'pregnant learners or learner-parents']])
+ +ch('Learners reached by RH/CSE sessions per school','By gender, largest first','bar',re.L,[{l:'Male',d:re.S.map(s=>vv(s,'rh',R[0])),c:COL.M},{l:'Female',d:re.S.map(s=>vv(s,'rh',R[1])),c:COL.F}],{h:1,stack:1,wide:1})
+ +ps('Sessions conducted per school','Largest first','rh',R[2],{c:'#6b3a5b'})
+ +ps('Teachers trained per school','Largest first','rh',R[3],{c:'#3f7f7a'})
+ +mt1('Reproductive health per school','rh',R)
+ +sect('Zero Single-Use Plastic','Policy, facilities and results')
+ +`<div class="card wide rings">${ring(zy(Z[0]),'Schools with the policy')}${ring(zy(Z[1]),'Plastic-free canteens')}${ring(zy(Z[2]),'Functional MRF / segregation')}${ring(mean(S.map(s=>vv(s,'zsup',Z[3]))),'Learners using reusables (avg)')}</div>`
+ +ps('Learners using reusables per school (%)','Highest first','zsup',Z[3],{c:'#2e7d5b',o:{pct:1,min:0,max:100,wide:1}})
+ +ps('Plastic collected or recycled per school (kg)','Largest first','zsup',Z[4],{c:'#7a1f2b'})
+ +ps('Ecobricks made per school','Largest first','zsup',Z[5],{c:'#d9a21b'})
+ +mt1('Zero single-use plastic per school','zsup',Z)}
+function aralCat(){const CT=ACT,CL=ACL,cc=['#7a1f2b','#d9a21b','#b5495b','#6b3a5b'],a=(s,r,c)=>n(v(s.id,'aral2',r,c)),tl=(s,c)=>CT.reduce((x,r)=>x+a(s,r,c),0),
+ gain=s=>{let w=0,t=0;CT.forEach(r=>{const l=a(s,r,'learners'),pr=v(s.id,'aral2',r,'pre'),po=v(s.id,'aral2',r,'post');if(l&&pr!=null&&po!=null){w+=l*(po-pr);t+=l}});return t?w/t:null},
+ cs=fn=>S.reduce((x,s)=>x+fn(s),0),basic=cs(s=>a(s,CT[0],'learners')+a(s,CT[2],'learners')),plus=cs(s=>a(s,CT[1],'learners')+a(s,CT[3],'learners')),tL=cs(s=>tl(s,'learners')),tI=cs(s=>tl(s,'improved')),
+ e=srt(s=>tl(s,'learners')),ip=srt(s=>pc(tl(s,'improved'),tl(s,'learners'))),gx=srt(gain),cm=(r,c)=>mean(S.filter(s=>a(s,r,'learners')>0).map(s=>v(s.id,'aral2',r,c))),ag=mean(S.map(gain));
+ return sect('ARAL categories and progress','Learners in ARAL Basic and ARAL Plus per subject, with progress results per school')
+ +kp([[f(basic),'ARAL Basic learners'],[f(plus),'ARAL Plus learners'],[tL?f(tI/tL*100,1)+'%':'—','learners who improved'],[ag==null?'—':f(ag,1)+' pts','average gain, post minus pre']])
+ +ch('ARAL learners per category, per school','Literacy and numeracy, Basic and Plus; largest program first','bar',e.L,CT.map((r,i)=>({l:CL[i],d:e.S.map(s=>a(s,r,'learners')),c:cc[i]})),{h:1,stack:1,wide:1})
+ +ch('Learners by ARAL category','Whole cluster','doughnut',CL,[{l:'Learners',d:CT.map(r=>S.reduce((x,s)=>x+a(s,r,'learners'),0))}],{colors:cc,ht:360})
+ +ch('Pre-test vs post-test mean, per category','Cluster average of school results','bar',CL,[{l:'Pre-test',d:CT.map(r=>cm(r,'pre')),c:'#a89a9c'},{l:'Post-test',d:CT.map(r=>cm(r,'post')),c:'#2e7d5b'}],{dec:1,min:0,max:100,ht:360})
+ +ch('Learners who improved, per school','Share of ARAL learners; highest first','bar',ip.L,[{l:'Improved',d:ip.X}],{h:1,pct:1,dec:1,min:0,max:100,colors:ip.X.map(x=>x==null?'#a89a9c':x>=70?'#2e7d5b':x>=50?'#d9a21b':'#d63a2f'),tg:avgL(ip.X,'Cluster')})
+ +ch('Average gain per school','Post-test minus pre-test, in points, weighted by learners','bar',gx.L,[{l:'Gain',d:gx.X}],{h:1,dec:1,colors:gx.X.map(x=>x==null?'#a89a9c':x>=0?'#2e7d5b':'#d63a2f'),tg:avgL(gx.X,'Cluster')})
+ +CT.map((r,i)=>tbl(CL[i]+': progress per school',['School','Enrolled','Improved','% improved','Met target','% met','Pre-test','Post-test','Gain'],S.map(s=>{const l=a(s,r,'learners'),im=a(s,r,'improved'),mm=a(s,r,'met'),pr=v(s.id,'aral2',r,'pre'),po=v(s.id,'aral2',r,'post');return[esc(s.name),f(l),f(im),l?f(im/l*100,1)+'%':'—',f(mm),l?f(mm/l*100,1)+'%':'—',f(pr,1),f(po,1),pr!=null&&po!=null?f(po-pr,1):'—']}))).join('')
+ +sect('ARAL tutors and totals','Learners and tutors per subject')}
+function subjRow(x=''){return`<div class="se-row" data-o="${esc(x)}" style="display:flex;gap:6px;margin:4px 0;align-items:center"><input type="text" maxlength="60" value="${esc(x)}" placeholder="Subject name" style="flex:1;text-align:left" aria-label="Subject name"><button type="button" class="btn sm alt" data-sa="up" aria-label="Move up">↑</button><button type="button" class="btn sm alt" data-sa="down" aria-label="Move down">↓</button><button type="button" class="btn sm alt" data-sa="del" aria-label="Remove subject">✕</button></div>`}
+function subjEditor(){const col=g=>`<div data-sg="${g}" style="flex:1;min-width:290px"><h3 style="margin:0 0 6px">Grade ${g}</h3><div class="se-list">${HS[g].map(subjRow).join('')}</div><p style="margin:8px 0 0"><button type="button" class="btn sm alt" data-sa="add">Add subject</button> <button type="button" class="btn sm" data-sa="save">Save Grade ${g} subjects</button> <span class="se-msg" role="status"></span></p></div>`;
+ return`<details class="card wide" ${subjOpen?'open':''}><summary style="cursor:pointer;font-weight:700">Edit the Mock NAT subject list (PSDS)</summary><div class="note" style="margin-top:8px">Rename, add, remove or reorder the subjects for each grade level. The list applies to every school, the encoder, the charts and the rankings. Renaming keeps the scores already encoded under the old name. Removing a subject only hides it: its scores stay saved and come back if you add the same name again.</div>${subjErr&&!DEMO?`<div class="warn">The subject list could not be saved or loaded yet (${esc(subjErr)}). Run supabase_update_handa_subjects.sql in Supabase. Until then the default five subjects are used.</div>`:''}<div style="display:flex;gap:28px;flex-wrap:wrap;margin-top:10px">${col('10')}${col('12')}</div></details>`}
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-sa]');if(!b)return;const col=b.closest('[data-sg]');if(!col)return;const g=col.dataset.sg,list=col.querySelector('.se-list'),row=b.closest('.se-row'),a=b.dataset.sa,msg=col.querySelector('.se-msg');
+ if(a==='up'){if(row.previousElementSibling)list.insertBefore(row,row.previousElementSibling);return}
+ if(a==='down'){if(row.nextElementSibling)list.insertBefore(row.nextElementSibling,row);return}
+ if(a==='del'){row.remove();return}
+ if(a==='add'){list.insertAdjacentHTML('beforeend',subjRow(''));list.lastElementChild.querySelector('input').focus();return}
+ const items=[...list.querySelectorAll('.se-row')].map(r=>({old:r.dataset.o,name:r.querySelector('input').value.trim().replace(/\s+/g,' ')})).filter(x=>x.name||x.old),bad=t=>{msg.innerHTML=`<span class="warn">${esc(t)}</span>`};
+ if(!items.length)return bad('Keep at least one subject.');
+ if(items.some(x=>!x.name))return bad('A subject has no name. Type a name or remove the row.');
+ if(items.some(x=>x.name.includes('|')))return bad('Subject names cannot contain the | character.');
+ const seen=new Set();for(const x of items){const k=x.name.toLowerCase();if(seen.has(k))return bad('"'+x.name+'" appears twice.');seen.add(k)}
+ msg.textContent='Saving…';
+ if(DEMO){[D,DP].forEach(src=>Object.values(src).forEach(m=>{const h=m.handa;if(!h)return;const moved={};items.forEach(x=>{if(x.old&&x.old!==x.name){const ok=g+'|'+x.old;if(h[ok]){moved[g+'|'+x.name]=h[ok];delete h[ok]}}});Object.assign(h,moved)}));HS[g]=items.map(x=>x.name);rebuildH()}
+ else{const{error}=await sb.rpc('handa_save_subjects',{p_grade:g,p_items:items});if(error)return bad('Not saved: '+error.message);await load()}
+ subjOpen=true;render();const c2=document.querySelector(`[data-sg="${g}"] .se-msg`);if(c2)c2.innerHTML='<span class="ok">Saved.</span>'});
+function handaV(){const py=prevSY(SY),mk=(src,s,g,x)=>src[s.id]?.handa?.[g+'|'+x]?.mps,gM=(src,s,g)=>mean(HS[g].map(x=>mk(src,s,g,x))),oM=(src,s)=>mean(['10','12'].flatMap(g=>HS[g].map(x=>mk(src,s,g,x)))),
+ scope=(src,s)=>hgSel==='All'?oM(src,s):gM(src,s,hgSel),gk=hgSel==='All'?'overall':'Grade '+hgSel,clG=(src,g,x)=>mean(S.map(s=>mk(src,s,g,x))),
+ rk=(src,fn)=>{const a=S.map(s=>({s,x:fn(src,s)})).filter(e=>e.x!=null).sort((p,q)=>q.x-p.x),m={};a.forEach((e,i)=>m[e.s.id]=i+1);return m},
+ dl=(a,b)=>a==null||b==null?'no previous year yet':`<span class="${a>=b?'ok':'warn'}">${a>=b?'▲':'▼'} ${f(Math.abs(a-b),2)} pts</span> vs SY ${py}`,
+ c10=mean(S.map(s=>gM(D,s,'10'))),p10=mean(S.map(s=>gM(DP,s,'10'))),c12=mean(S.map(s=>gM(D,s,'12'))),p12=mean(S.map(s=>gM(DP,s,'12'))),co=mean(S.map(s=>oM(D,s))),po=mean(S.map(s=>oM(DP,s))),
+ rep=S.filter(s=>oM(D,s)!=null).length,head=me.role!=='psds',ids=new Set(S.map(s=>s.id)),nm=Object.fromEntries(schools.map(s=>[s.id,s.name]));
+ const tops=g=>{const L=TOP.filter(x=>x.grade===g&&ids.has(x.school_id)).sort((p,q)=>q.score-p.score).slice(0,10);
+  return`<div class="card"><h3>Top 10 learners, Grade ${g}, Cluster Mock Test</h3><div class="tw"><table><thead><tr><th style="text-align:left">Rank</th><th style="text-align:left">Learner</th><th style="text-align:left">School</th><th>Score (%)</th></tr></thead><tbody>${L.length?L.map((x,i)=>`<tr><td>${i+1}</td><td style="text-align:left">${esc(x.learner_name)}</td><td style="text-align:left">${esc(nm[x.school_id]||'')}</td><td class="n">${f(x.score,1)}</td></tr>`).join(''):'<tr><td colspan="4" style="text-align:left">No learners listed yet.</td></tr>'}</tbody></table></div></div>`};
+ const e=srt(s=>scope(D,s)),r10=rk(D,(x,s)=>gM(x,s,'10')),r12=rk(D,(x,s)=>gM(x,s,'12')),ro=rk(D,oM),rp=rk(DP,oM),mv=s=>ro[s.id]&&rp[s.id]?(rp[s.id]-ro[s.id]>0?'▲ '+(rp[s.id]-ro[s.id]):rp[s.id]-ro[s.id]<0?'▼ '+(ro[s.id]-rp[s.id]):'—'):'—',
+ order=[...S].sort((p,q)=>((ro[p.id]==null)-(ro[q.id]==null))||(ro[p.id]-ro[q.id])),cell=x=>`<span class="${mcls(x)}" style="padding:2px 6px;border-radius:4px">${f(x,1)}</span>`;
+ return `<div class="card wide"><label for="hg" style="margin:0 0 6px">Grade level shown in the school rankings</label><select id="hg" style="max-width:260px" onchange="hgSel=this.value;render()"><option value="All" ${hgSel==='All'?'selected':''}>Grades 10 and 12 combined</option><option value="10" ${hgSel==='10'?'selected':''}>Grade 10</option><option value="12" ${hgSel==='12'?'selected':''}>Grade 12</option></select><div class="note">Project HANDA: Mock NAT mean percentage scores per school. Descriptor colors follow the MPS bands used in GSA &amp; MPS.</div></div>`
+ +(head?'':subjEditor())
+ +kp([[f(c10,1),'Grade 10 MPS, SY '+SY+'<br>'+dl(c10,p10)],[f(c12,1),'Grade 12 MPS, SY '+SY+'<br>'+dl(c12,p12)],[f(co,1),'overall MPS<br>'+dl(co,po)],[rep+' / '+S.length,'schools with Mock NAT results']])
+ +['10','12'].map(g=>ch('Grade '+g+' Mock NAT MPS per subject','Cluster average, previous vs current school year','bar',HS[g],[{l:'SY '+py,d:HS[g].map(x=>clG(DP,g,x)),c:'#a89a9c'},{l:'SY '+SY,d:HS[g].map(x=>clG(D,g,x)),c:'#7a1f2b'}],{dec:1,min:0,max:100})).join('')
+ +(head?`<div class="card wide"><div class="note">School ranking compares schools across the cluster, so it is shown on the PSDS dashboard. Your own subject results are in the table below.</div></div>`
+  :ch('School ranking, '+gk+' Mock NAT MPS, SY '+SY,'Highest first; color shows the MPS descriptor band','bar',e.L,[{l:'MPS',d:e.X}],{h:1,dec:1,min:0,max:100,colors:e.X.map(mcol),tg:avgL(e.X,'Cluster'),wide:1})
+  +ch('School performance: previous vs current school year ('+gk+')','Same order as the ranking above','bar',e.L,[{l:'SY '+py,d:e.S.map(s=>scope(DP,s)),c:'#a89a9c'},{l:'SY '+SY,d:e.S.map(s=>scope(D,s)),c:'#7a1f2b'}],{h:1,dec:1,min:0,max:100,wide:1})
+  +tbl('Project HANDA school ranking, SY '+SY,['School','Grade 10 MPS','G10 rank','Grade 12 MPS','G12 rank','Overall MPS','Overall rank','Rank SY '+py,'Movement'],order.map(s=>[esc(s.name),cell(gM(D,s,'10')),r10[s.id]??'—',cell(gM(D,s,'12')),r12[s.id]??'—',cell(oM(D,s)),ro[s.id]??'—',rp[s.id]??'—',mv(s)]),'Overall MPS is the mean of all Grade 10 and Grade 12 subject MPS. Movement compares the overall rank with the previous school year.'))
+ +tbl('Mock NAT MPS per school and subject, SY '+SY,['School',...HS['10'].map(x=>'G10 '+x),...HS['12'].map(x=>'G12 '+x)],S.map(s=>[esc(s.name),...HS['10'].map(x=>cell(mk(D,s,'10',x))),...HS['12'].map(x=>cell(mk(D,s,'12',x)))]))
+ +tops('10')+tops('12')+(topErr&&!DEMO?`<div class="card wide"><div class="warn">Top learners are not available yet (${esc(topErr)}). Run supabase_update_handa.sql in Supabase.</div></div>`:'')}
+
+function persRoster(){const T=new Date(),ids=new Set(S.map(s=>s.id)),nm=Object.fromEntries(schools.map(s=>[s.id,s.name])),
+ R=PERS.filter(x=>ids.has(x.school_id)).map(x=>({...x,age:dmo(x.birthdate,T),svc:dmo(x.date_appointed,T),prm:dmo(x.date_promoted,T),sn:nm[x.school_id]||''})),head=sect('Personnel roster','Individual records: birthdate, employment status, date of original appointment and date of last promotion');
+ if(!R.length)return head+`<div class="card wide"><div class="note">${persErr&&!DEMO?'The roster table is not ready ('+esc(persErr)+'). Run supabase_update_personnel.sql in Supabase.':'No roster records yet. School heads can add them under Encode data, Personnel roster.'}</div></div>`;
+ const av=(a,k)=>{const x=a.map(r=>r[k]).filter(z=>z!=null);return x.length?x.reduce((p,q)=>p+q,0)/x.length/12:null},band=(vals,edges,labels)=>{const c=labels.map(()=>0);vals.forEach(m=>{if(m==null)return;const y=m/12;let i=edges.findIndex(e=>y<e);if(i<0)i=labels.length-1;c[i]++});return c},
+ SL=[...PST,'Not stated'],st=x=>PST.includes(x.status)?x.status:'Not stated',byS=S.map(s=>({s,r:R.filter(x=>x.school_id===s.id)})),e=srt(s=>R.filter(x=>x.school_id===s.id).length),
+ aL=['Under 25','25–34','35–44','45–54','55–59','60–64','65 and above'],vL=['Under 3 yrs','3–5','6–10','11–15','16–20','21–25','26–30','31 and above'],pL=['Under 3 yrs','3–5','6–10','11–15','16 and above','No promotion date'],
+ pr=band(R.map(x=>x.prm),[3,6,11,16],pL.slice(0,5)),perm=R.filter(x=>x.status==='Permanent').length,s60=R.filter(x=>x.age!=null&&x.age>=720).length,ae=srt(s=>av(R.filter(x=>x.school_id===s.id),'svc'));
+ return head+kp([[f(R.length),'personnel on the roster'],[f(av(R,'age'),1),'average age (years)'],[f(av(R,'svc'),1),'average years in service'],[f(av(R,'prm'),1),'average years since last promotion'],[f(s60),'aged 60 and above'],[f(perm/R.length*100,1)+'%','permanent']])
+ +ch('Employment status','Whole selection','doughnut',SL,[{l:'Personnel',d:SL.map(l=>R.filter(x=>st(x)===l).length)}],{ht:380})
+ +ch('Age profile','Number of personnel per age band','bar',aL,[{l:'Personnel',d:band(R.map(x=>x.age),[25,35,45,55,60,65],aL),c:'#7a1f2b'}],{ht:380})
+ +ch('Years in service','Counted from the date of original appointment','bar',vL,[{l:'Personnel',d:band(R.map(x=>x.svc),[3,6,11,16,21,26,31],vL),c:'#3f7f7a'}],{ht:380})
+ +ch('Years since last promotion','Personnel without a promotion date are counted separately','bar',pL,[{l:'Personnel',d:[...pr,R.filter(x=>x.prm==null).length],c:'#d9a21b'}],{ht:380})
+ +ch('Employment status per school','Largest roster first','bar',e.L,SL.map((l,i)=>({l,d:e.S.map(s=>R.filter(x=>x.school_id===s.id&&st(x)===l).length),c:PAL[i%10]})),{h:1,stack:1,wide:1})
+ +ch('Average years in service per school','Longest first','bar',ae.L,[{l:'Years',d:ae.X,c:'#7a1f2b'}],{h:1,dec:1})
+ +tbl('Roster summary per school',['School','Personnel','Avg age','Avg years in service','Avg years since promotion','Aged 60+','Permanent'],byS.map(({s,r})=>[esc(s.name),f(r.length),f(av(r,'age'),1),f(av(r,'svc'),1),f(av(r,'prm'),1),f(r.filter(x=>x.age!=null&&x.age>=720).length),f(r.filter(x=>x.status==='Permanent').length)]))
+ +tbl('Personnel roster',['Name','School','Position','Status','Birthdate','Age','Original appointment','Years in service','Last promotion','Since last promotion'],[...R].sort((a,b)=>a.sn.localeCompare(b.sn)||a.full_name.localeCompare(b.full_name)).map(x=>[esc(x.full_name),esc(x.sn),esc(x.position||'—'),esc(x.status||'—'),fdt(x.birthdate),x.age==null?'—':Math.floor(x.age/12),fdt(x.date_appointed),fym(x.svc),fdt(x.date_promoted),fym(x.prm)]),'Years are computed up to today. Aged 60 and above is a planning signal for retirement and succession.')}
+
+function opsGov(){const SG=SGCI,sgn=s=>SG.filter(x=>v(s.id,'sgc',x,'v')==1).length,sgp=s=>sgn(s)/SG.length*100,lv=p=>p>=100?'Fully prepared':p>=60?'Prepared':p>0?'Partially prepared':'Not yet started',lc=p=>p>=100?'#2e7d5b':p>=60?'#3f7f7a':p>0?'#d9a21b':'#d63a2f',
+ pv_=(s,i)=>v(s.id,'pta',PTR[i],'v'),pl=x=>x==null?'—':x>=90?'Very high':x>=75?'High':x>=50?'Moderate':'Low',pcl=x=>x==null?'#a89a9c':x>=90?'#2e7d5b':x>=75?'#3f7f7a':x>=50?'#d9a21b':'#d63a2f',
+ ow=(s,i)=>n(DS[s.id]?.own?.[OWN[i]]?.v),oT=s=>OWN.reduce((a,_,i)=>a+ow(s,i),0),hasDoc=s=>OWN.slice(0,7).some((_,i)=>ow(s,i)>0),mdt=s=>n(pv_(s,3))+n(pv_(s,4)),
+ sgE=srt(sgp),ptE=srt(s=>pv_(s,0)),pcE=srt(s=>pv_(s,2)),eL=srt(oT),mE=srt(mdt),sumP=i=>S.reduce((a,s)=>a+n(pv_(s,i)),0),areaT=S.reduce((a,s)=>a+oT(s),0),SHORT=['Land title','Usufruct','Deed of donation','Deed of sale','Proclamation / reservation','Lease','Other document','No document yet'];
+ return sect('SGC preparedness','School Governing Council checklist for SY '+SY)
+ +kp([[S.filter(s=>sgp(s)>=100).length+' / '+S.length,'schools fully prepared'],[f(mean(S.map(sgp)),0)+'%','average checklist completion'],[S.filter(s=>sgn(s)===0).length,'schools not yet started']])
+ +ch('SGC preparedness per school','Share of checklist items accomplished; color shows the level','bar',sgE.L,[{l:'Preparedness',d:sgE.X}],{h:1,pct:1,dec:0,min:0,max:100,colors:sgE.X.map(x=>x==null?'#a89a9c':lc(x))})
+ +ch('SGC checklist coverage','Number of schools that accomplished each item','bar',SG,[{l:'Schools',d:SG.map(x=>S.filter(s=>v(s.id,'sgc',x,'v')==1).length),c:'#7a1f2b'}],{h:1})
+ +tbl('SGC checklist per school',['School',...SG,'Score','Level'],S.map(s=>[esc(s.name),...SG.map(x=>v(s.id,'sgc',x,'v')==1?'✓':'—'),f(sgp(s),0)+'%',lv(sgp(s))]),'Level: Fully prepared is every item, Prepared is 60% or more, Partially prepared is at least one item.')
+ +sect('PTA level of participation','General assembly attendance, meetings and contributions')
+ +kp([[f(mean(S.map(s=>pv_(s,0))),1)+'%','average general assembly attendance'],[S.filter(s=>n(pv_(s,0))>=75).length+' / '+S.length,'schools with high or very high participation'],[f(sumP(1)),'PTA meetings held'],['₱'+f(sumP(2)),'PTA contributions and projects']])
+ +ch('PTA attendance per school','Percent of parents at the general assembly; color shows the level','bar',ptE.L,[{l:'Attendance',d:ptE.X}],{h:1,pct:1,dec:1,min:0,max:100,colors:ptE.X.map(pcl),tg:avgL(ptE.X,'Cluster')})
+ +ch('PTA contributions and projects per school','Thousand pesos (K), largest first','bar',pcE.L,[{l:'Contributions',d:pcE.X,c:'#6b3a5b'}],{h:1,fmt:x=>f(x/1000)+'K'})
+ +tbl('PTA participation per school',['School','Attendance','Level','Meetings held','Contributions (₱)'],S.map(s=>[esc(s.name),pv_(s,0)==null?'—':f(pv_(s,0),1)+'%',pl(pv_(s,0)),f(pv_(s,1)),f(pv_(s,2))]),'Levels: Very high 90% and above, High 75 to 89%, Moderate 50 to 74%, Low below 50%.')
+ +sect('School ownership and land area','Land area by type of ownership document; saved once and carried over every school year')
+ +kp([[f(areaT),'sq m of school land'],[f(areaT/10000,2),'hectares'],[S.filter(hasDoc).length+' / '+S.length,'schools with an ownership document'],[S.filter(s=>ow(s,0)>0).length,'schools with a land title'],[S.filter(s=>!hasDoc(s)).length,'schools without a document']])
+ +ch('Land area per school, by ownership document','Square meters, largest first','bar',eL.L,OWN.map((o,i)=>({l:SHORT[i],d:eL.S.map(s=>ow(s,i)),c:PAL[i%10]})),{h:1,stack:1,wide:1})
+ +ch('Land area by ownership document','Whole selection','doughnut',SHORT,[{l:'sq m',d:OWN.map((o,i)=>S.reduce((a,s)=>a+ow(s,i),0))}],{ht:380})
+ +ch('Schools per ownership document','Number of schools with area under each type','bar',SHORT,[{l:'Schools',d:OWN.map((o,i)=>S.filter(s=>ow(s,i)>0).length),c:'#3f7f7a'}],{h:1})
+ +tbl('School ownership and land area',['School',...SHORT,'Total sq m','Hectares'],S.map(s=>[esc(s.name),...OWN.map((o,i)=>f(ow(s,i))),f(oT(s)),f(oT(s)/10000,2)]))
+ +sect('Metal detectors','Ownership and working units')
+ +kp([[f(sumP(3)),'walk-through detectors'],[f(sumP(4)),'hand-held detectors'],[f(sumP(5)),'functional units'],[S.filter(s=>mdt(s)>0).length+' / '+S.length,'schools with a metal detector']])
+ +ch('Metal detectors owned per school','Walk-through and hand-held','bar',mE.L,[{l:'Walk-through',d:mE.S.map(s=>n(pv_(s,3))),c:'#7a1f2b'},{l:'Hand-held',d:mE.S.map(s=>n(pv_(s,4))),c:'#d9a21b'}],{h:1,stack:1})
+ +tbl('Metal detectors per school',['School','Walk-through','Hand-held','Total owned','Functional'],S.map(s=>[esc(s.name),f(pv_(s,3)),f(pv_(s,4)),f(mdt(s)),f(pv_(s,5))]))}
+function innovV(){const ids=new Set(S.map(s=>s.id)),nm=Object.fromEntries(schools.map(s=>[s.id,s.name])),L=INN.filter(x=>ids.has(x.school_id)),cats=[...new Set(L.map(x=>x.category||'Uncategorized'))],e=srt(s=>L.filter(x=>x.school_id===s.id).length),
+ head=sect('Innovations and best practices','Practices each school has developed or adopted');
+ if(!L.length)return head+`<div class="card wide"><div class="note">${innErr&&!DEMO?'The innovations table is not ready ('+esc(innErr)+'). Run supabase_update_batch4.sql in Supabase.':'No innovations or best practices listed yet. School heads can add them under Encode data, Innovations & best practices.'}</div></div>`;
+ return head+kp([[f(L.length),'innovations and best practices'],[new Set(L.map(x=>x.school_id)).size+' / '+S.length,'schools with at least one'],[f(cats.length),'categories']])
+ +ch('Practices by category','Whole selection','doughnut',cats,[{l:'Practices',d:cats.map(c=>L.filter(x=>(x.category||'Uncategorized')===c).length)}],{ht:380})
+ +ch('Practices per school','Largest first','bar',e.L,[{l:'Practices',d:e.X,c:'#7a1f2b'}],{h:1,ht:380})
+ +`<div class="card wide"><h3>Catalogue</h3><input type="search" placeholder="Search by school, title, proponent, category or keyword" style="max-width:420px;margin-bottom:10px" oninput="filterRows('inn',this.value)"><div class="tw"><table id="inn"><thead><tr><th style="text-align:left">School</th><th style="text-align:left">Innovation or best practice</th><th style="text-align:left">Proponent(s)</th><th style="text-align:left">Designation(s)</th><th style="text-align:left">Category</th><th style="text-align:left">Since SY</th><th style="text-align:left">Description</th><th style="text-align:left">Results</th></tr></thead><tbody>${[...L].sort((a,b)=>(nm[a.school_id]||'').localeCompare(nm[b.school_id]||'')||a.title.localeCompare(b.title)).map(x=>`<tr class="wr"><td>${esc(nm[x.school_id]||'')}</td><td><b>${esc(x.title)}</b></td><td>${esc(x.proponents||'')}</td><td>${esc(x.designation||'')}</td><td>${esc(x.category||'')}</td><td>${esc(x.sy_started||'')}</td><td>${esc(x.description||'')}</td><td>${esc(x.results||'')}</td></tr>`).join('')}</tbody></table></div></div>`}
+function taV(){const TY=TAY(),tv=(s,y,k)=>TAD[s.id]?.[y]?.[k]?.v==1,tc=['#7a1f2b','#d9a21b','#3f7f7a'],cnt=s=>TY.reduce((a,y)=>a+TAT.filter(([k])=>tv(s,y,k)).length,0),e=srt(cnt),N=S.length,cur=SY;
+ return sect('Technical assistance received','Pakig-AMBIT (Division Office), Project BISITA (Cluster Office) and regular PSDS monitoring, from SY 2024-2025 to SY '+SY)
+ +kp([...TAT.map(([k,l])=>[S.filter(s=>tv(s,cur,k)).length+' / '+N,l.split(' (')[0]+', SY '+cur]),[S.filter(s=>TAT.every(([k])=>tv(s,cur,k))).length+' / '+N,'received all three, SY '+cur]])
+ +ch('Schools reached per school year','Number of schools that received each assistance','bar',TY.map(y=>'SY '+y),TAT.map(([k,l],i)=>({l:l.split(' (')[0],d:TY.map(y=>S.filter(s=>tv(s,y,k)).length),c:tc[i]})),{wide:1,ht:360})
+ +ch('Assistance received per school, since SY 2024-2025','Total ticks across all years and types; largest first','bar',e.L,TAT.map(([k,l],i)=>({l:l.split(' (')[0],d:e.S.map(s=>TY.filter(y=>tv(s,y,k)).length),c:tc[i]})),{h:1,stack:1,wide:1})
+ +tbl('Technical assistance status per school',['School',...TY.flatMap(y=>TAT.map(([k,l])=>y+' '+l.split(' (')[0].replace('Pakig-',''))),'SY '+cur+' total'],S.map(s=>[esc(s.name),...TY.flatMap(y=>TAT.map(([k])=>tv(s,y,k)?'✓':'—')),TAT.filter(([k])=>tv(s,cur,k)).length+' / 3']),'A check mark means the school received that assistance in that school year. School heads tick them under Encode data, Technical assistance received.')}
+function alsV(){const py=prevSY(SY),a=(src,s,k,x)=>n(src[s.id]?.als?.[k]?.[x]),tot=(src,s,k)=>a(src,s,k,'M')+a(src,s,k,'F'),all=(src,s)=>tot(src,s,'JHS')+tot(src,s,'SHS'),sm=(src,fn)=>S.reduce((x,s)=>x+fn(src,s),0),
+ cT=sm(D,all),pT=sm(DP,all),e=srt(s=>all(D,s)),P=[['JHS','ALS Junior High School'],['SHS','ALS Senior High School']];
+ return sect('ALS enrollees','Alternative Learning System: Junior High School and Senior High School enrollees')
+ +kp([[f(cT),'ALS enrollees, SY '+SY],[f(sm(D,(x,s)=>tot(x,s,'JHS'))),'ALS Junior High School'],[f(sm(D,(x,s)=>tot(x,s,'SHS'))),'ALS Senior High School'],[pT?(cT>=pT?'+':'')+f(cT-pT):'—','change from SY '+py]])
+ +ch('ALS enrollees per school','Junior and Senior High School; largest first','bar',e.L,P.map(([k,l],i)=>({l,d:e.S.map(s=>tot(D,s,k)),c:['#7a1f2b','#d9a21b'][i]})),{h:1,stack:1,wide:1})
+ +ch('ALS enrollees by gender','Whole selection, current school year','bar',P.map(p=>p[1]),[{l:'Male',d:P.map(([k])=>sm(D,(x,s)=>a(x,s,k,'M'))),c:COL.M},{l:'Female',d:P.map(([k])=>sm(D,(x,s)=>a(x,s,k,'F'))),c:COL.F}],{stack:1,ht:340})
+ +ch('Previous vs current school year','Whole selection','bar',P.map(p=>p[1]),[{l:'SY '+py,d:P.map(([k])=>sm(DP,(x,s)=>tot(x,s,k))),c:'#a89a9c'},{l:'SY '+SY,d:P.map(([k])=>sm(D,(x,s)=>tot(x,s,k))),c:'#7a1f2b'}],{ht:340})
+ +tbl('ALS enrollees per school',['School','JHS male','JHS female','JHS total','SHS male','SHS female','SHS total','Total','Total SY '+py],S.map(s=>[esc(s.name),f(a(D,s,'JHS','M')),f(a(D,s,'JHS','F')),f(tot(D,s,'JHS')),f(a(D,s,'SHS','M')),f(a(D,s,'SHS','F')),f(tot(D,s,'SHS')),f(all(D,s)),f(all(DP,s))]))}
+function snedV(){const py=prevSY(SY),a=(src,s,id,g,x)=>n(src[s.id]?.sned?.[g+'|'+x]?.[id]),gx=(src,s,g,x)=>SNC.reduce((t,[id])=>t+a(src,s,id,g,x),0),gt=(src,s,g)=>gx(src,s,g,'M')+gx(src,s,g,'F'),
+ ct=(src,s,id)=>GR.reduce((t,g)=>t+a(src,s,id,g,'M')+a(src,s,id,g,'F'),0),sx=(src,s,x)=>GR.reduce((t,g)=>t+gx(src,s,g,x),0),all=(src,s)=>sx(src,s,'M')+sx(src,s,'F'),sm=(src,fn)=>S.reduce((t,s)=>t+fn(src,s),0),
+ enr=(src,s)=>GR.reduce((t,g)=>t+n(src[s.id]?.learners?.[g]?.enr_M)+n(src[s.id]?.learners?.[g]?.enr_F),0),pct=(src,s)=>enr(src,s)>0?all(src,s)/enr(src,s)*100:null,
+ cT=sm(D,all),pT=sm(DP,all),cE=sm(D,enr),e=srt(s=>all(D,s)),rep=S.filter(s=>all(D,s)>0).length,GG=GR.filter(g=>S.some(s=>s.depts.includes(dOf(g)))),CN=SNC.map(c=>c[1]);
+ return sect('SNED learners','Learners with disabilities per school, by grade level, category and gender, with their share of total enrolment')
+ +(snedErr&&!DEMO?`<div class="card wide"><div class="warn">The SNED category list is not ready (${esc(snedErr)}). Run supabase_update_sned.sql in Supabase. Until then the default categories are used.</div></div>`:'')
+ +kp([[f(cT),'SNED learners, SY '+SY],[cE?f(cT/cE*100,2)+'%':'—','of total enrolment'],[pT?(cT>=pT?'+':'')+f(cT-pT):'—','change from SY '+py],[rep+' / '+S.length,'schools with SNED learners encoded']])
+ +ch('SNED learners per school','Male and female; largest first','bar',e.L,[{l:'Male',d:e.S.map(s=>sx(D,s,'M')),c:COL.M},{l:'Female',d:e.S.map(s=>sx(D,s,'F')),c:COL.F}],{h:1,stack:1,wide:1})
+ +ch('SNED learners by grade level','Whole selection, current school year','bar',GG.map(gl),[{l:'Male',d:GG.map(g=>sm(D,(x,s)=>gx(x,s,g,'M'))),c:COL.M},{l:'Female',d:GG.map(g=>sm(D,(x,s)=>gx(x,s,g,'F'))),c:COL.F}],{stack:1,wide:1,ht:380})
+ +ch('SNED learners by category','Whole selection, current school year','bar',CN,[{l:'Male',d:SNC.map(([id])=>sm(D,(x,s)=>GR.reduce((t,g)=>t+a(x,s,id,g,'M'),0))),c:COL.M},{l:'Female',d:SNC.map(([id])=>sm(D,(x,s)=>GR.reduce((t,g)=>t+a(x,s,id,g,'F'),0))),c:COL.F}],{h:1,stack:1,wide:1,ht:Math.max(300,CN.length*34+80)})
+ +ch('Previous vs current school year per school','Total SNED learners','bar',e.L,[{l:'SY '+py,d:e.S.map(s=>all(DP,s)),c:'#a89a9c'},{l:'SY '+SY,d:e.S.map(s=>all(D,s)),c:'#7a1f2b'}],{h:1,wide:1})
+ +tbl('SNED learners per school, SY '+SY,['School','Male','Female','Total','% of enrolment','Total SY '+py,'Change'],S.map(s=>[esc(s.name),f(sx(D,s,'M')),f(sx(D,s,'F')),f(all(D,s)),pct(D,s)==null?'—':f(pct(D,s),2)+'%',f(all(DP,s)),all(DP,s)||all(D,s)?(all(D,s)>=all(DP,s)?'+':'')+f(all(D,s)-all(DP,s)):'—']),'Percent of enrolment uses the enrolment encoded under Learners &amp; enrolment for the same school year.')
+ +tbl('SNED learners per school and grade level, SY '+SY,['School',...GG.map(g=>g==='K'?'K':'G'+g),'Total'],S.map(s=>[esc(s.name),...GG.map(g=>s.depts.includes(dOf(g))?f(gt(D,s,g)):'—'),f(all(D,s))]),'Male and female combined. A dash means the school has no such grade level.')
+ +tbl('SNED learners per school and category, SY '+SY,['School',...SNC.map(c=>esc(c[1]))],S.map(s=>[esc(s.name),...SNC.map(([id])=>f(ct(D,s,id)))]),'Male and female, all grade levels combined.')}
+function slacV(){const ids=new Set(S.map(s=>s.id)),nm=Object.fromEntries(schools.map(s=>[s.id,s.name])),P=LACP.filter(x=>ids.has(x.school_id)&&x.sy===SY),L=LACS.filter(x=>ids.has(x.school_id)&&x.sy===SY),pp=s=>P.find(x=>x.school_id===s.id),ls=s=>L.filter(x=>x.school_id===s.id),pa=x=>n(x.participants),
+ head=sect('School Learning Action Cell (SLAC), SY '+SY,'LAC plan approval, plan file and LAC sessions implemented. Pick another school year in the header to see its SLAC.');
+ if(lacErr&&!DEMO)return head+`<div class="card wide"><div class="warn">The SLAC tables are not ready (${esc(lacErr)}). Run supabase_update_batch4.sql in Supabase.</div></div>`;
+ const ap=S.filter(s=>pp(s)?.approved).length,fl=S.filter(s=>pp(s)?.file_path).length,tp=L.reduce((a,x)=>a+pa(x),0),e=srt(s=>ls(s).length),pe=srt(s=>ls(s).reduce((a,x)=>a+pa(x),0)),mo=[...new Set(L.map(x=>(x.date_implemented||'').slice(0,7)).filter(Boolean))].sort();
+ return head+kp([[ap+' / '+S.length,'schools with a Division-approved LAC plan'],[fl+' / '+S.length,'schools that uploaded the plan'],[f(L.length),'LAC sessions implemented'],[f(tp),'total participants'],[L.length?f(tp/L.length,1):'—','participants per session']])
+ +ch('LAC sessions per school','Largest first','bar',e.L,[{l:'Sessions',d:e.X,c:'#7a1f2b'}],{h:1})
+ +ch('LAC participants per school','Total across sessions; largest first','bar',pe.L,[{l:'Participants',d:pe.X,c:'#3f7f7a'}],{h:1})
+ +(mo.length?ch('LAC sessions per month','By date implemented','bar',mo.map(m=>new Date(m+'-01T00:00:00').toLocaleDateString('en-PH',{month:'short',year:'numeric'})),[{l:'Sessions',d:mo.map(m=>L.filter(x=>(x.date_implemented||'').startsWith(m)).length),c:'#d9a21b'}],{wide:1,ht:320}):'')
+ +tbl('LAC plan and sessions per school',['School','Plan approved by Division','Plan file','Sessions','Participants','Latest session'],S.map(s=>{const p=pp(s),d=ls(s).map(x=>x.date_implemented).filter(Boolean).sort().pop();return[esc(s.name),p?.approved?'✓ Approved':'—',p?.file_path?`<button class="btn sm alt" data-p="${esc(p.file_path)}" onclick="openLac(this.dataset.p)">${esc(p.file_name||'Open file')}</button>`:'—',f(ls(s).length),f(ls(s).reduce((a,x)=>a+pa(x),0)),fdt(d)]}))
+ +`<div class="card wide"><h3>LAC sessions implemented</h3><input type="search" placeholder="Search by school or session title" style="max-width:380px;margin-bottom:10px" oninput="filterRows('lacs',this.value)"><div class="tw"><table id="lacs"><thead><tr><th style="text-align:left">School</th><th style="text-align:left">Title of the LAC session</th><th style="text-align:left">Date implemented</th><th>Participants</th></tr></thead><tbody>${L.length?[...L].sort((a,b)=>(b.date_implemented||'').localeCompare(a.date_implemented||'')).map(x=>`<tr class="wr"><td>${esc(nm[x.school_id]||'')}</td><td>${esc(x.title)}</td><td>${fdt(x.date_implemented)}</td><td class="n">${f(x.participants)}</td></tr>`).join(''):'<tr><td colspan="4" style="text-align:left">No LAC sessions listed yet.</td></tr>'}</tbody></table></div></div>`}
+
+const V={
+overview(){const eM=GR.reduce((a,g)=>a+T('learners',g,'enr_M'),0),eF=GR.reduce((a,g)=>a+T('learners',g,'enr_F'),0),ip=GR.reduce((a,g)=>a+T('learners',g,'ip_M')+T('learners',g,'ip_F'),0),cct=GR.reduce((a,g)=>a+T('learners',g,'cct_M')+T('learners',g,'cct_F'),0);
+ const tp=['Elementary','JHS','SHS'].reduce((a,d)=>a+T('personnel',d+'|Teaching','M')+T('personnel',d+'|Teaching','F'),0),al=T('mooe','Allocation','amt'),ut=['Q1','Q2','Q3','Q4'].reduce((a,q)=>a+T('mooe',q,'amt'),0);
+ const ids=new Set(S.map(s=>s.id)),g=mean(GSA.filter(x=>ids.has(x.school_id)).map(x=>x.value)),m=mean(MPS.filter(x=>ids.has(x.school_id)).map(ov)),rep=S.filter(s=>D[s.id]).length,R=rateRows(SY),cur=R[3],comp=mean(S.map(s=>v(s.id,'rates',cur,'completion')));
+ const e=srt(enrS),gs=srt(s=>gsaOf(s.id)),mo=srt(s=>{const a=n(v(s.id,'mooe','Allocation','amt'));return a?['Q1','Q2','Q3','Q4'].reduce((x,q)=>x+n(v(s.id,'mooe',q,'amt')),0)/a*100:null});
+ return kp([[rep+' / '+S.length,'schools reporting'],[f(eM+eF),'learners enrolled'],[f(eM),'male'],[f(eF),'female'],[f(ip),'IP learners'],[f(cct),'CCT beneficiaries'],[f(tp),'teaching personnel'],[f(g,2),'cluster GSA'],[f(m,2),'cluster MPS'],[al?f(ut/al*100,1)+'%':'—','MOOE utilized']])
+ +`<div class="card wide rings">${ring(S.length?rep/S.length*100:null,'Schools reporting')}${ring(al?ut/al*100:null,'MOOE utilized')}${ring(comp,'Completion SY '+cur)}${ring(g,'Cluster GSA')}${ring(m,'Cluster MPS')}</div>`
+ +ch('Enrollment per school','Largest to smallest, male and female','bar',e.L,[{l:'Male',d:by(e.S,'enr_M'),c:COL.M},{l:'Female',d:by(e.S,'enr_F'),c:COL.F}],{h:1,stack:1})
+ +ch('Gender share of enrollment','Whole cluster','doughnut',['Male','Female'],[{l:'Learners',d:[eM,eF]}],{colors:[COL.M,COL.F],ht:Math.min(400,Math.max(300,e.L.length*38+100))})
+ +ch('GSA ranking per school','Color shows the COMPASS descriptor band','bar',gs.L,[{l:'GSA',d:gs.X}],{h:1,dec:2,min:60,max:100,colors:gs.X.map(gcol)})
+ +ch('MOOE utilization per school','Share of allocation already used','bar',mo.L,[{l:'Utilized',d:mo.X}],{h:1,pct:1,min:0,max:100,colors:mo.X.map(x=>x==null?'#a89a9c':x>=75?'#2e7d5b':x>=40?'#d9a21b':'#d63a2f'),tg:avgL(mo.X,'Cluster')})
+ +`<div class="card wide"><h3>Data submission progress</h3><div class="sub">Modules encoded per school, out of ${TOT} (${TOT-1} encoding modules plus COMPASS scores)</div>${[...S].sort((a,b)=>modsDone(b)-modsDone(a)).map(s=>{const k=modsDone(s);return`<div class="pg"><span>${esc(shortN(s.name,44))}</span><i><u style="--w:${k/TOT*100}%"></u></i><em>${k}/${TOT}</em></div>`}).join('')}</div>`},
+learners(){return enrolCmp()+V.learnersBase()},
+learnersBase(){const L=GR.map(gl),sets=p=>[{l:'Male',d:GR.map(g=>T('learners',g,p+'_M')),c:COL.M},{l:'Female',d:GR.map(g=>T('learners',g,p+'_F')),c:COL.F}],e=srt(enrS);
+ const ipP=srt(s=>pc(by([s],'ip_M')[0]+by([s],'ip_F')[0],enrS(s))),ctP=srt(s=>pc(by([s],'cct_M')[0]+by([s],'cct_F')[0],enrS(s))),tM=GR.reduce((a,g)=>a+T('learners',g,'enr_M'),0),tF=GR.reduce((a,g)=>a+T('learners',g,'enr_F'),0);
+ return ch('Enrollment per grade level, by gender','Cluster total; labels show learners per gender','bar',L,sets('enr'),{stack:1,wide:1})
+ +ch('Enrollment per school','Largest to smallest','bar',e.L,[{l:'Male',d:by(e.S,'enr_M'),c:COL.M},{l:'Female',d:by(e.S,'enr_F'),c:COL.F}],{h:1,stack:1})
+ +ch('Gender share of enrollment','Whole cluster','doughnut',['Male','Female'],[{l:'Learners',d:[tM,tF]}],{colors:[COL.M,COL.F],ht:Math.min(400,Math.max(300,e.L.length*38+100))})
+ +ch('IP learners per grade level','By gender','bar',L,sets('ip'),{stack:1})
+ +ch('IP learners as % of enrollment','Per school, highest first','bar',ipP.L,[{l:'IP %',d:ipP.X}],{h:1,pct:1,colors:'#6b3a5b'})
+ +ch('CCT beneficiaries per grade level','By gender','bar',L,sets('cct'),{stack:1})
+ +ch('CCT beneficiaries as % of enrollment','Per school, highest first','bar',ctP.L,[{l:'CCT %',d:ctP.X}],{h:1,pct:1,colors:'#b5495b'})
+ +tbl('Learners per school',['School','Enrolled M','Enrolled F','Total','IP M','IP F','CCT M','CCT F'],S.map(s=>{const t=p=>sumG(s.id,'learners',p,GR);return[esc(s.name),f(t('enr_M')),f(t('enr_F')),f(t('enr_M')+t('enr_F')),f(t('ip_M')),f(t('ip_F')),f(t('cct_M')),f(t('cct_F'))]}))},
+personnel(){return V.personnelBase()+persRoster()},
+personnelBase(){const ks=['Elementary','JHS','SHS'],tt=(s,c,x)=>ks.reduce((a,d)=>a+n(v(s.id,'personnel',d+'|'+c,x)),0),tot=s=>tt(s,'Teaching','M')+tt(s,'Teaching','F')+tt(s,'Non-teaching','M')+tt(s,'Non-teaching','F'),e=srt(tot),lt=srt(s=>{const t=tchS(s,'M')+tchS(s,'F');return t?enrS(s)/t:null}),rows=[];
+ ks.forEach(d=>['Teaching','Non-teaching'].forEach(c=>rows.push([d+' – '+c,f(T('personnel',d+'|'+c,'M')),f(T('personnel',d+'|'+c,'F')),f(T('personnel',d+'|'+c,'M')+T('personnel',d+'|'+c,'F'))])));
+ const tT=S.reduce((a,s)=>a+tt(s,'Teaching','M')+tt(s,'Teaching','F'),0),tN=S.reduce((a,s)=>a+tt(s,'Non-teaching','M')+tt(s,'Non-teaching','F'),0);
+ return ch('Personnel per school','Teaching and non-teaching, by gender','bar',e.L,[{l:'Teaching male',d:e.S.map(s=>tt(s,'Teaching','M')),c:'#b5495b'},{l:'Teaching female',d:e.S.map(s=>tt(s,'Teaching','F')),c:'#d9a21b'},{l:'Non-teaching male',d:e.S.map(s=>tt(s,'Non-teaching','M')),c:'#dba3ad'},{l:'Non-teaching female',d:e.S.map(s=>tt(s,'Non-teaching','F')),c:'#ecd08a'}],{h:1,stack:1,wide:1})
+ +ch('Teaching vs non-teaching','Whole cluster','doughnut',['Teaching','Non-teaching'],[{l:'Personnel',d:[tT,tN]}],{colors:['#7a1f2b','#d9a21b'],ht:340})
+ +ch('Personnel per department','Elementary, junior and senior high','bar',['Elementary','Junior High','Senior High'],[{l:'Teaching male',d:ks.map(d=>T('personnel',d+'|Teaching','M')),c:'#b5495b'},{l:'Teaching female',d:ks.map(d=>T('personnel',d+'|Teaching','F')),c:'#d9a21b'},{l:'Non-teaching male',d:ks.map(d=>T('personnel',d+'|Non-teaching','M')),c:'#dba3ad'},{l:'Non-teaching female',d:ks.map(d=>T('personnel',d+'|Non-teaching','F')),c:'#ecd08a'}],{stack:1,ht:340})
+ +ch('Learners per teacher','Enrolled learners divided by teaching personnel; highest load first','bar',lt.L,[{l:'Learners per teacher',d:lt.X}],{h:1,dec:1,colors:lt.X.map(x=>x==null?'#a89a9c':x>mean(lt.X)?'#d63a2f':'#2e7d5b'),tg:avgL(lt.X,'Cluster avg'),wide:1})
+ +tbl('Cluster personnel per department, by gender',['Department – category','Male','Female','Total'],rows)
+ +tbl('Personnel per school',['School','Teaching M','Teaching F','Non-teaching M','Non-teaching F','Total'],S.map(s=>[esc(s.name),f(tt(s,'Teaching','M')),f(tt(s,'Teaching','F')),f(tt(s,'Non-teaching','M')),f(tt(s,'Non-teaching','F')),f(tot(s))]))},
+positions(){const CL=POSG.map(g=>g[0]),ct0=(s,c,x)=>POSG.find(g=>g[0]===c)[1].reduce((a,p)=>a+n(v(s.id,'positions',p,x)),0),ct=(s,c)=>ct0(s,c,'M')+ct0(s,c,'F'),tot=s=>CL.reduce((a,c)=>a+ct(s,c),0),
+ PT=(p,x)=>T('positions',p,x),catT=(c,x)=>S.reduce((a,s)=>a+(x?ct0(s,c,x):ct(s,c)),0),all=S.reduce((a,s)=>a+tot(s),0),used=POS.filter(p=>PT(p,'M')+PT(p,'F')>0),e=srt(tot),
+ ntC=['Administrative Assistant','Administrative Officer','Project Development Officer','Other non-teaching'];
+ return kp([[f(all),'personnel with a recorded position'],[f(catT('Teacher I–III')+catT('Teacher IV–VII')),'Teacher I to VII'],[f(catT('Master Teacher')),'Master Teachers'],[f(catT('Head Teacher')),'Head Teachers'],[f(catT('Principal')),'Principals'],[f(ntC.reduce((a,c)=>a+catT(c),0)),'non-teaching personnel']])
+ +ch('Distribution of positions, whole cluster','Positions with at least one personnel, by gender','bar',used,[{l:'Male',d:used.map(p=>PT(p,'M')),c:COL.M},{l:'Female',d:used.map(p=>PT(p,'F')),c:COL.F}],{h:1,stack:1,wide:1})
+ +ch('Share by position category','Whole cluster','doughnut',CL,[{l:'Personnel',d:CL.map(c=>catT(c))}],{ht:380})
+ +ch('Position categories by gender','Whole cluster','bar',CL,[{l:'Male',d:CL.map(c=>catT(c,'M')),c:COL.M},{l:'Female',d:CL.map(c=>catT(c,'F')),c:COL.F}],{stack:1,ht:380})
+ +ch('Position categories per school','Largest workforce first','bar',e.L,CL.map((c,i)=>({l:c,d:e.S.map(s=>ct(s,c)),c:PAL[i%10]})),{h:1,stack:1,wide:1})
+ +tbl('Cluster distribution of positions',['Position','Male','Female','Total','% of personnel'],POS.map(p=>{const m=PT(p,'M'),fm=PT(p,'F');return[esc(p),f(m),f(fm),f(m+fm),all?f((m+fm)/all*100,1)+'%':'—']}),'All positions are listed so the office can see where there are none.')
+ +tbl('Position categories per school',['School',...CL,'Total'],S.map(s=>[esc(s.name),...CL.map(c=>f(ct(s,c))),f(tot(s))]))},
+pmes(){const R=pmesRows(SY),cl=R[2],K=['o','vs','s','u','p'],KL=['Outstanding','Very Satisfactory','Satisfactory','Unsatisfactory','Poor'],kc=['#2e7d5b','#3f7f7a','#d9a21b','#e08a3c','#d63a2f'],
+ g=(s,r,k)=>n(v(s.id,'pmes',r,k)),rt=(s,r)=>K.reduce((a,k)=>a+g(s,r,k),0),ov2=(s,r)=>{const t=rt(s,r);return t?(g(s,r,'o')+g(s,r,'vs'))/t*100:null},
+ cT=(r,k)=>S.reduce((a,s)=>a+g(s,r,k),0),cR=r=>S.reduce((a,s)=>a+rt(s,r),0),cOV=r=>{const t=cR(r);return t?(cT(r,'o')+cT(r,'vs'))/t*100:null},px=k=>cR(cl)?cT(cl,k)/cR(cl)*100:null,
+ pp=srt(s=>ov2(s,cl)),lines=[...S.map((s,i)=>({l:s.name,d:R.map(r=>ov2(s,r)),c:PAL[i%10],w:1.5,nolab:1})),{l:'Cluster',d:R.map(cOV),c:'#2b1216',w:4}];
+ return kp([[f(cR(cl)),'teachers rated, SY '+cl],[f(px('o'),1)+'%','Outstanding'],[f(px('vs'),1)+'%','Very Satisfactory'],[f(cOV(cl),1)+'%','Outstanding + Very Satisfactory'],[f(px('s'),1)+'%','Satisfactory'],[cR(cl)?f(px('u')+px('p'),1)+'%':'—','Unsatisfactory + Poor']])
+ +ch('PMES rating distribution, last 3 school years','Share of rated teachers, whole cluster','bar',R.map(r=>'SY '+r),KL.map((l,i)=>({l,d:R.map(r=>cR(r)?cT(r,K[i])/cR(r)*100:null),c:kc[i]})),{stack:1,pct:1,max:100,wide:1,ht:400})
+ +ch('Outstanding and Very Satisfactory share per school','Thin lines are schools; the bold line is the cluster','line',R.map(r=>'SY '+r),lines,{wide:1,pct:1,dec:1,ht:400,yt:'% of rated teachers',min:0,max:100})
+ +ch('Teachers rated per school year','Whole cluster','bar',R.map(r=>'SY '+r),[{l:'Teachers rated',d:R.map(cR),c:'#7a1f2b'}],{ht:340})
+ +ch('Rating mix per school, SY '+cl,'Highest Outstanding + Very Satisfactory share first','bar',pp.L,KL.map((l,i)=>({l,d:pp.S.map(s=>rt(s,cl)?g(s,cl,K[i])/rt(s,cl)*100:null),c:kc[i]})),{h:1,stack:1,pct:1,max:100,wide:1})
+ +tbl('PMES summary per school',['School',...R.flatMap(r=>['Rated '+r,'O+VS % '+r]),...KL.map(l=>l+' '+cl)],S.map(s=>[esc(s.name),...R.flatMap(r=>[f(rt(s,r)),heat(ov2(s,r),60,100,0,1)]),...K.map(k=>f(g(s,cl,k)))]),'O+VS % is the share of rated teachers with an Outstanding or Very Satisfactory rating. The three years end with the school year before the one selected above.')},
+rates(){const R=rateRows(SY),cur=R[3],prv=R[2],g=(s,r,c)=>v(s.id,'rates',r,c),avg=(r,c)=>mean(S.map(s=>g(s,r,c))),
+ IN=[['completion','Completion rate',0,[90,100]],['dropout','Simple dropout rate',1,[0,6]],['repetition','Repetition rate',1,[0,6]],['graduation','Graduation rate',0,[90,100]],['promotion','Promotion rate',0,[90,100]]],
+ dl=(c,inv)=>{const a=avg(cur,c),b=avg(prv,c);if(a==null||b==null)return'no previous year yet';const d=a-b,good=inv?d<=0:d>=0;return`<span class="${good?'ok':'warn'}">${d>=0?'▲':'▼'} ${f(Math.abs(d),2)} pts</span> vs SY ${prv}`},
+ lines=[...S.map((s,i)=>({l:s.name,d:R.map(r=>g(s,r,'completion')),c:PAL[i%10],w:1.5,nolab:1})),{l:'Cluster average',d:R.map(r=>avg(r,'completion')),c:'#2b1216',w:4}];
+ return `<div class="kp">${IN.map(([c,l,inv])=>`<div><b>${f(avg(cur,c),2)}${avg(cur,c)==null?'':'%'}</b><span>${l}, SY ${cur}<br>${dl(c,inv)}</span></div>`).join('')}</div>`
+ +ch('Cluster average: previous vs current school year','Percent of learners','bar',IN.map(i=>i[1]),[{l:'SY '+prv,d:IN.map(i=>avg(prv,i[0])),c:'#a89a9c'},{l:'SY '+cur,d:IN.map(i=>avg(cur,i[0])),c:'#7a1f2b'}],{pct:1,dec:1,wide:1,ht:360})
+ +ch('Completion rate trend, last 3 school years and current','Thin lines are schools; the bold line is the cluster average','line',R.map(r=>'SY '+r),lines,{wide:1,pct:1,dec:1,ht:420,yt:'Completion %',min:85,max:100})
+ +ch('Dropout and repetition trend','Cluster average, percent of learners','line',R.map(r=>'SY '+r),[{l:'Simple dropout rate',d:R.map(r=>avg(r,'dropout')),c:'#d63a2f'},{l:'Repetition rate',d:R.map(r=>avg(r,'repetition')),c:'#d9a21b'}],{wide:1,pct:1,dec:1,ht:340,min:0})
+ +IN.map(([c,l,inv])=>{const o=srt(s=>g(s,cur,c),inv);return ch(l+' per school',(inv?'Lowest first; ':'Highest first; ')+'previous vs current school year','bar',o.L,[{l:'SY '+prv,d:o.S.map(s=>g(s,prv,c)),c:'#a89a9c'},{l:'SY '+cur,d:o.S.map(s=>g(s,cur,c)),c:'#7a1f2b'}],{h:1,pct:1,...(inv?{min:0}:{min:80,max:100}),tg:avgL(o.X,'Cluster '+cur)})}).join('')
+ +tbl('Performance indicators per school',['School',...IN.flatMap(([c,l])=>[l.replace(' rate','')+' '+prv,l.replace(' rate','')+' '+cur])],S.map(s=>[esc(s.name),...IN.flatMap(([c,l,inv,[lo,hi]])=>[heat(g(s,prv,c),lo,hi,inv),heat(g(s,cur,c),lo,hi,inv)])]),'Cell colors: green is better, red needs attention. Dropout and repetition are better when lower.')},
+handa(){return handaV()},
+okdeped(){return V.health('bmi')+okdExtra()},
+philiri(){return V.health('phil')},
+innov(){return innovV()},
+ta(){return taV()},
+als(){return alsV()},
+sned(){return snedV()},
+slac(){return slacV()},
+academic(){const ids=new Set(S.map(s=>s.id)),G=GSA.filter(x=>ids.has(x.school_id)),P=MPS.filter(x=>ids.has(x.school_id)),sg=subj(G,x=>x.value),sm=subj(P,x=>ov(x)),subs=[...new Set([...Object.keys(sg),...Object.keys(sm)])].sort();
+ if(sjSel!=='All'&&!subs.includes(sjSel))sjSel='All';const G2=sjSel==='All'?G:G.filter(x=>x.subject===sjSel),P2=sjSel==='All'?P:P.filter(x=>x.subject===sjSel),pk=k=>subs.map(s=>mean(subj(P,x=>x[k])[s]||[]));
+ const gk=srt(s=>mean(G2.filter(x=>x.school_id===s.id).map(x=>x.value))),mk=srt(s=>mean(P2.filter(x=>x.school_id===s.id).map(ov)));
+ const mat=(arr,fn,cls)=>`<div class="tw"><table><thead><tr><th>School</th>${subs.map(b=>`<th>${esc(b)}</th>`).join('')}</tr></thead><tbody>${S.map(s=>`<tr><td>${esc(s.name)}</td>${subs.map(b=>{const x=mean(arr.filter(r=>r.school_id===s.id&&r.subject===b).map(fn));return`<td class="n"><span class="${cls(x)}" style="padding:2px 6px;border-radius:4px">${f(x,2)}</span></td>`}).join('')}</tr>`).join('')}</tbody></table></div>`;
+ return `<div class="card wide"><label for="sj" style="margin:0 0 6px">Subject shown in the school rankings</label><select id="sj" style="max-width:320px" onchange="sjSel=this.value;render()"><option>All</option>${subs.map(b=>`<option ${b===sjSel?'selected':''}>${esc(b)}</option>`).join('')}</select><div class="note">Scores come from each school’s Project COMPASS. Descriptor colors: advanced, proficient, approaching, developing, beginning.</div></div>`
+ +ch('GSA per subject area','Cluster average across schools, grades and terms','bar',subs,[{l:'GSA',d:subs.map(s=>mean(sg[s]||[]))}],{dec:2,min:60,max:100,colors:subs.map(s=>gcol(mean(sg[s]||[]))),wide:1})
+ +ch('MPS per learning area per exam','Cluster average','bar',subs,[{l:'ST1',d:pk('st1'),c:'#b5495b'},{l:'ST2',d:pk('st2'),c:'#d9a21b'},{l:'Exam',d:pk('exam'),c:'#7a1f2b'}],{dec:1,wide:1,ht:380,max:100})
+ +ch('GSA ranking per school'+(sjSel==='All'?'':' – '+esc(sjSel)),'Highest first','bar',gk.L,[{l:'GSA',d:gk.X}],{h:1,dec:2,min:60,max:100,colors:gk.X.map(gcol),tg:avgL(gk.X,'Cluster')})
+ +ch('MPS ranking per school'+(sjSel==='All'?'':' – '+esc(sjSel)),'Mean of ST1, ST2 and Exam','bar',mk.L,[{l:'MPS',d:mk.X}],{h:1,dec:1,min:0,max:100,colors:mk.X.map(mcol),tg:avgL(mk.X,'Cluster')})
+ +ch('Subject profile: GSA and MPS','Strong and weak subject areas at a glance','radar',subs,[{l:'GSA',d:subs.map(s=>mean(sg[s]||[])),c:'#7a1f2b'},{l:'MPS',d:subs.map(s=>mean(sm[s]||[])),c:'#d9a21b'}],{min:40,max:100,lab:false,ht:380,wide:1})
+ +`<div class="card wide"><h3>GSA matrix (school × subject)</h3>${mat(G,x=>x.value,gcls)}</div><div class="card wide"><h3>MPS matrix (school × subject)</h3>${mat(P,ov,mcls)}</div>`},
+mooe(){return mooeKp()+V.mooeBase()+gadView()},
+mooeBase(){const Qs=['Q1','Q2','Q3','Q4'],K=x=>f(x/1000)+'K',us=s=>Qs.reduce((x,q)=>x+n(v(s.id,'mooe',q,'amt')),0),al=s=>n(v(s.id,'mooe','Allocation','amt')),e=srt(s=>pc(us(s),al(s))),A=T('mooe','Allocation','amt'),U=Qs.reduce((a,q)=>a+T('mooe',q,'amt'),0),qc=['#7a1f2b','#b5495b','#d9a21b','#6b3a5b'];let cum=0;
+ return ch('MOOE utilization per quarter, per school','Amounts in thousand pesos (K)','bar',S.map(s=>s.name),Qs.map((q,i)=>({l:q,d:S.map(s=>n(v(s.id,'mooe',q,'amt'))),c:qc[i]})),{h:1,stack:1,fmt:K,wide:1})
+ +ch('Utilization rate per school','Share of allocation used; red is under 40%','bar',e.L,[{l:'Utilized',d:e.X}],{h:1,pct:1,min:0,max:100,colors:e.X.map(x=>x==null?'#a89a9c':x>=75?'#2e7d5b':x>=40?'#d9a21b':'#d63a2f'),tg:avgL(e.X,'Cluster')})
+ +ch('Where the cluster allocation stands','Quarterly use and unspent balance','doughnut',[...Qs,'Balance'],[{l:'Pesos',d:[...Qs.map(q=>T('mooe',q,'amt')),Math.max(0,A-U)]}],{colors:[...qc,'#e6d6d8'],fmt:K,ht:360})
+ +ch('Cumulative utilization, cluster','Percent of total allocation used by quarter','line',Qs,[{l:'Cumulative %',d:Qs.map(q=>{cum+=T('mooe',q,'amt');return A?cum/A*100:null}),c:'#7a1f2b'}],{pct:1,min:0,max:100,ht:360})
+ +tbl('MOOE allocation and utilization',['School','Allocation','Q1','Q2','Q3','Q4','Utilized','% utilized','Balance'],S.map(s=>[esc(s.name),f(al(s),2),...Qs.map(q=>f(v(s.id,'mooe',q,'amt'),2)),f(us(s),2),al(s)?heat(us(s)/al(s)*100,20,90,0,1)+'%':'—',f(al(s)-us(s),2)]))},
+health(part){const B=['sw','w','n','ow','ob'],BL=['Severely wasted','Wasted','Normal','Overweight','Obese'],bc=['#d63a2f','#e08a3c','#2e7d5b','#d9a21b','#5c1420'],gs=GR.slice(1,11),
+ bt=(s,p)=>B.reduce((a,k)=>a+n(v(s.id,'bmi',p,k)),0),bp=(s,p,c)=>pc(n(v(s.id,'bmi',p,c)),bt(s,p)),lv=['f','i','n'],LL=['Frustration','Instructional','Independent'],lc=['#d63a2f','#d9a21b','#2e7d5b'],
+ pt=(s,p)=>lv.reduce((a,k)=>a+sumG(s.id,'philiri',p+'_'+k,gs),0),pp=(s,p,k)=>pc(sumG(s.id,'philiri',p+'_'+k,gs),pt(s,p)),eb=srt(s=>bp(s,'Endline','n')),ep=srt(s=>pp(s,'post','n')),clB=(p,c)=>pc(T('bmi',p,c),B.reduce((a,k)=>a+T('bmi',p,k),0)),clP=(p,k)=>pc(gs.reduce((a,g)=>a+T('philiri',g,p+'_'+k),0),lv.reduce((a,j)=>a+gs.reduce((b,g)=>b+T('philiri',g,p+'_'+j),0),0));
+ if(part==='bmi')return ch('BMI status per school, endline','Share of learners; schools with most normal-weight learners first','bar',eb.L,B.map((c,i)=>({l:BL[i],d:eb.S.map(s=>bp(s,'Endline',c)),c:bc[i]})),{h:1,stack:1,pct:1,max:100,wide:1,dec:0})
+ +ch('BMI status, cluster endline','Whole cluster','doughnut',BL,[{l:'Learners',d:B.map(c=>T('bmi','Endline',c))}],{colors:bc,ht:360})
+ +ch('BMI baseline vs endline','Share of learners per status','bar',BL,[{l:'Baseline',d:B.map(c=>clB('Baseline',c)),c:'#a89a9c'},{l:'Endline',d:B.map(c=>clB('Endline',c)),c:'#7a1f2b'}],{pct:1,ht:360})
+ +tbl('BMI records per school',['School',...['Baseline','Endline'].flatMap(p=>BL.map(l=>p[0]==='B'?'Base '+l:'End '+l))],S.map(s=>[esc(s.name),...['Baseline','Endline'].flatMap(p=>B.map(c=>f(v(s.id,'bmi',p,c))))]));
+ return ch('Phil-IRI reading levels per school, post-test','Share of learners; most independent readers first','bar',ep.L,lv.map((k,i)=>({l:LL[i],d:ep.S.map(s=>pp(s,'post',k)),c:lc[i]})),{h:1,stack:1,pct:1,max:100,wide:1})
+ +ch('Phil-IRI, cluster pre vs post','Share of learners per reading level','bar',['Pre-test','Post-test'],lv.map((k,i)=>({l:LL[i],d:['pre','post'].map(p=>clP(p,k)),c:lc[i]})),{stack:1,pct:1,max:100,ht:360})
+ +ch('Independent readers: pre vs post','Per school, share of learners','bar',ep.L,[{l:'Pre-test',d:ep.S.map(s=>pp(s,'pre','n')),c:'#a89a9c'},{l:'Post-test',d:ep.S.map(s=>pp(s,'post','n')),c:'#2e7d5b'}],{h:1,pct:1,max:100})
+ +tbl('Phil-IRI per school (all grades)',['School','Pre Frustration','Pre Instructional','Pre Independent','Post Frustration','Post Instructional','Post Independent'],S.map(s=>[esc(s.name),...['pre_f','pre_i','pre_n','post_f','post_i','post_n'].map(c=>f(sumG(s.id,'philiri',c,gs)))]))},
+aral(){return aralCat()+V.aralBase()},
+aralBase(){const R=['Literacy','Numeracy'],e=srt(s=>R.reduce((a,r)=>a+n(v(s.id,'aral',r,'learners')),0)),lr=srt(s=>pc(R.reduce((a,r)=>a+n(v(s.id,'aral',r,'learners')),0),R.reduce((a,r)=>a+n(v(s.id,'aral',r,'tutors')),0))),rc={Literacy:'#7a1f2b',Numeracy:'#d9a21b'};
+ return ch('ARAL learners per school','Literacy and numeracy; largest program first','bar',e.L,R.map(r=>({l:r,d:e.S.map(s=>v(s.id,'aral',r,'learners')),c:rc[r]})),{h:1,wide:1})
+ +ch('ARAL tutors per school','Same school order','bar',e.L,R.map(r=>({l:r,d:e.S.map(s=>v(s.id,'aral',r,'tutors')),c:rc[r]})),{h:1})
+ +ch('Learners vs tutors, cluster','Literacy and numeracy','bar',R,[{l:'Learners',d:R.map(r=>T('aral',r,'learners')),c:'#b5495b'},{l:'Tutors',d:R.map(r=>T('aral',r,'tutors')),c:'#6b3a5b'}],{ht:Math.min(400,Math.max(300,e.L.length*38+100))})
+ +ch('Learners per tutor','Both subjects combined; heaviest load first','bar',lr.L,[{l:'Learners per tutor',d:lr.X}],{h:1,dec:1,colors:lr.X.map(x=>x==null?'#a89a9c':x>mean(lr.X)?'#d63a2f':'#2e7d5b'),tg:avgL(lr.X,'Cluster avg')})
+ +ch('Learners share by subject','Whole cluster','doughnut',R,[{l:'Learners',d:R.map(r=>T('aral',r,'learners'))}],{colors:['#7a1f2b','#d9a21b'],ht:340})
+ +tbl('ARAL per school',['School','Literacy learners','Literacy tutors','Numeracy learners','Numeracy tutors'],S.map(s=>[esc(s.name),f(v(s.id,'aral','Literacy','learners')),f(v(s.id,'aral','Literacy','tutors')),f(v(s.id,'aral','Numeracy','learners')),f(v(s.id,'aral','Numeracy','tutors'))]))},
+ops(){return V.opsBase()+opsGov()},
+opsBase(){const R=MODS.ops.rows().map(r=>r[0]),el='Electricity (1=yes,0=no)',wt='Potable water (1=yes,0=no)',sh=[['Classrooms needing repair','#d9a21b'],['Seat shortage','#d63a2f'],['Teacher vacancies','#6b3a5b']],yes=k=>pc(S.filter(s=>v(s.id,'ops',k,'v')==1).length,S.length);
+ return ch('Shortages per school','Classrooms needing repair, seat shortage and teacher vacancies','bar',S.map(s=>s.name),sh.map(([k,c])=>({l:k,d:S.map(s=>v(s.id,'ops',k,'v')),c})),{h:1,wide:1})
+ +ch('Schools with basic services','Percent of schools reporting yes','bar',['Electricity','Potable water'],[{l:'Schools',d:[yes(el),yes(wt)]}],{pct:1,min:0,max:100,colors:['#d9a21b','#b5495b'],ht:340})
+ +ch('Learners with internet access','Per school, percent','bar',S.map(s=>s.name),[{l:'Internet access',d:S.map(s=>v(s.id,'ops','Learners with internet access (%)','v'))}],{h:1,pct:1,min:0,max:100,colors:'#b5495b'})
+ +tbl('School operations',['School',...R],S.map(s=>[esc(s.name),...R.map(r=>f(v(s.id,'ops',r,'v')))]))},
+};
+// ---------- Encoding (school head only) ----------
+let emod='learners';
+function encode(){if(!allowedE(emod)){const k=Object.keys(MODS).find(k=>!MODS[k].hidden&&allowedE(k));if(!k){$('#main').innerHTML='<div class="card wide"><h3>No data entry assigned</h3><div class="note">Your account has no encoding tab. Ask your school head to assign one. You can still open the dashboard tabs assigned to you.</div></div>';return}emod=k}if(MODS[emod].custom)return ({roster:encodeRoster,innov:encodeInnov,slac:encodeSlac}[MODS[emod].custom]||encodeTop)();const M=MODS[emod],rows=M.rows(SY).filter(([k])=>{if(emod==='personnel')return school.depts.includes(k.split('|')[0]);if(emod==='handaenc')return school.depts.includes(k.startsWith('10')?'JHS':'SHS');if(emod==='learners'||emod==='philiri'||emod==='enrol')return school.depts.includes(dOf(k));if(emod==='sned')return school.depts.includes(dOf(k.split('|')[0]));return true}),
+ gv=(k,c)=>M.get?M.get(k,c):(M.static?DS:D)[school.id]?.[emod]?.[k]?.[c],
+ cell=(k,c)=>M.check?`<input type="checkbox" data-r="${esc(k)}" data-c="${c}" ${gv(k,c)==1?'checked':''}>`:`<input type="number" step="any" min="0" data-r="${esc(k)}" data-c="${c}" value="${gv(k,c)??''}">`;
+ $('#main').innerHTML=`<div class="card wide"><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">${ebar()}</div>
+ <h3>${M.t} • ${esc(school.name)} • SY ${SY}</h3><div class="note">${M.check?'Tick the boxes that apply, then press Save.':'Type numbers, then press Save. Blank cells stay empty.'}${M.note?' '+esc(M.note):''} GSA and MPS come from Project COMPASS automatically.</div>
+ <div class="tw"><table class="grid"><thead><tr><th>${M.t}</th>${M.cols.map(c=>`<th>${c[1].replace('Previous SY','SY '+prevSY(SY)).replace('Current SY','SY '+SY)}</th>`).join('')}</tr></thead><tbody>${rows.map(([k,l])=>`<tr><td>${esc(l)}</td>${M.cols.map(([c])=>`<td>${cell(k,c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
+ <p><button class="btn" id="sv">Save ${M.t}</button> <span id="sm"></span></p></div>`;
+ document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{emod=b.dataset.m;encode()});
+ $('#sv').onclick=async()=>{const ins=[...document.querySelectorAll('.grid input')],out=M.save?M.save(ins):ins.map(i=>({school_id:school.id,sy:M.static?'static':SY,module:emod,row_key:i.dataset.r,col_key:i.dataset.c,value:i.type==='checkbox'?(i.checked?1:0):i.value===''?null:+i.value,updated_at:new Date().toISOString()}));
+  const{error}=DEMO?(out.forEach(o=>{if(o.module==='ta'){(((TAD[o.school_id]??={})[o.sy]??={})[o.row_key]??={})[o.col_key]=o.value;return}(((((o.sy==='static'?DS:o.sy===SY?D:DP)[o.school_id])??={})[o.module]??={})[o.row_key]??={})[o.col_key]=o.value}),{}):await sb.from('cluster_data').upsert(out);$('#sm').innerHTML=error?`<span class="warn">Not saved: ${esc(error.message)}</span>`:'<span class="ok">Saved.</span>';if(!error)await load()}}
+
+function ebar(){return Object.entries(MODS).filter(([k,m])=>!m.hidden&&allowedE(k)).map(([k,m])=>`<button class="btn sm ${k===emod?'':'alt'}" data-m="${k}">${m.t}</button>`).join('')}
+function encodeTop(){const gs=[['10','JHS'],['12','SHS']].filter(([g,d])=>school.depts.includes(d)),mine=TOP.filter(x=>x.school_id===school.id);
+ $('#main').innerHTML=`<div class="card wide"><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">${ebar()}</div>
+ <h3>${MODS.handatop.t} • ${esc(school.name)} • SY ${SY}</h3><div class="note">List this school’s highest scorers in the Cluster Mock Test, up to 10 per grade level, with each learner’s overall score (%). Saving replaces this school’s list for the school year.</div>${topErr&&!DEMO?`<div class="warn">The top-learners table is not ready (${esc(topErr)}). Ask the PSDS office to run supabase_update_handa.sql.</div>`:''}
+ ${gs.map(([g])=>{const L=mine.filter(x=>x.grade===g).sort((a,b)=>b.score-a.score);return`<h3 style="margin-top:14px">Grade ${g}</h3><div class="tw"><table class="grid"><thead><tr><th>#</th><th>Learner name</th><th>Score (%)</th></tr></thead><tbody>${Array.from({length:10},(_,i)=>`<tr><td>${i+1}</td><td><input type="text" style="text-align:left;min-width:260px" data-g="${g}" data-k="n" data-i="${i}" value="${esc(L[i]?.learner_name||'')}"></td><td><input type="number" step="any" min="0" max="100" data-g="${g}" data-k="s" data-i="${i}" value="${L[i]?.score??''}"></td></tr>`).join('')}</tbody></table></div>`}).join('')}
+ <p><button class="btn" id="sv">Save top learners</button> <span id="sm"></span></p></div>`;
+ document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{emod=b.dataset.m;encode()});
+ $('#sv').onclick=async()=>{const rows=[],q=(g,k,i)=>document.querySelector(`input[data-g="${g}"][data-k="${k}"][data-i="${i}"]`);
+  gs.forEach(([g])=>{for(let i=0;i<10;i++){const nm=q(g,'n',i).value.trim(),sc=q(g,'s',i).value;if(nm)rows.push({school_id:school.id,sy:SY,grade:g,learner_name:nm,score:sc===''?null:+sc})}});
+  let error=null;
+  if(DEMO){TOP=TOP.filter(x=>!(x.school_id===school.id&&x.sy===SY));rows.forEach(r=>TOP.push({...r,id:Math.random()}))}
+  else{({error}=await sb.from('handa_learners').delete().eq('school_id',school.id).eq('sy',SY));if(!error&&rows.length)({error}=await sb.from('handa_learners').insert(rows))}
+  $('#sm').innerHTML=error?`<span class="warn">Not saved: ${esc(error.message)}</span>`:'<span class="ok">Saved.</span>';if(!error&&!DEMO)await load()}}
+
+function encodeRoster(){const mine=PERS.filter(x=>x.school_id===school.id),orig=new Set(mine.map(x=>x.id)),opt=(L,cur)=>['',...L].map(p=>`<option value="${esc(p)}" ${p===cur?'selected':''}>${esc(p)||'Select'}</option>`).join(''),
+ rowH=(x={})=>`<tr data-id="${x.id||''}"><td><input type="text" data-k="full_name" style="text-align:left;min-width:210px" placeholder="Surname, Given name" value="${esc(x.full_name||'')}"></td><td><select data-k="position" style="min-width:190px">${opt(POS,x.position)}</select></td><td><select data-k="status" style="min-width:190px">${opt(PST,x.status)}</select></td><td><input type="date" data-k="birthdate" value="${x.birthdate||''}"></td><td><input type="date" data-k="date_appointed" value="${x.date_appointed||''}"></td><td><input type="date" data-k="date_promoted" value="${x.date_promoted||''}"></td><td class="n" data-c="age">—</td><td class="n" data-c="svc">—</td><td class="n" data-c="prm">—</td><td><input type="text" data-k="remarks" style="text-align:left;min-width:150px" value="${esc(x.remarks||'')}"></td><td><button class="btn sm alt rm" type="button">Remove</button></td></tr>`,
+ refresh=tr=>{const g=k=>tr.querySelector(`[data-k="${k}"]`).value,T=new Date(),a=dmo(g('birthdate'),T),sv=dmo(g('date_appointed'),T),p=dmo(g('date_promoted'),T);tr.querySelector('[data-c=age]').textContent=a==null?'—':Math.floor(a/12);tr.querySelector('[data-c=svc]').textContent=fym(sv);tr.querySelector('[data-c=prm]').textContent=fym(p)};
+ $('#main').innerHTML=`<div class="card wide"><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">${ebar()}</div>
+ <h3>${MODS.roster.t} • ${esc(school.name)}</h3><div class="note">One row per personnel. Age, years in service (counted from the date of original appointment) and years since the last promotion are computed automatically from today’s date. Leave the promotion date blank if the person has not been promoted. Birthdates are personal data: only this school and the PSDS office can see them.</div>${persErr&&!DEMO?`<div class="warn">The roster table is not ready (${esc(persErr)}). Ask the PSDS office to run supabase_update_personnel.sql.</div>`:''}
+ <div class="tw"><table class="grid" id="rt"><thead><tr><th>Name</th><th>Position</th><th>Employment status</th><th>Birthdate</th><th>Original appointment</th><th>Last promotion</th><th>Age</th><th>Years in service</th><th>Since last promotion</th><th>Remarks</th><th></th></tr></thead><tbody>${(mine.length?mine:[{},{},{},{},{}]).map(rowH).join('')}</tbody></table></div>
+ <p><button class="btn alt" id="add" type="button">Add a row</button> <button class="btn" id="sv">Save roster</button> <span id="sm"></span></p></div>`;
+ const tb=$('#rt tbody');tb.querySelectorAll('tr').forEach(refresh);
+ document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{emod=b.dataset.m;encode()});
+ tb.addEventListener('input',e=>refresh(e.target.closest('tr')));tb.addEventListener('change',e=>refresh(e.target.closest('tr')));
+ tb.addEventListener('click',e=>{if(e.target.classList.contains('rm'))e.target.closest('tr').remove()});
+ $('#add').onclick=()=>{tb.insertAdjacentHTML('beforeend',rowH());refresh(tb.lastElementChild)};
+ $('#sv').onclick=async()=>{const rows=[...tb.querySelectorAll('tr')].map(tr=>{const g=k=>tr.querySelector(`[data-k="${k}"]`).value.trim();return{id:tr.dataset.id||null,full_name:g('full_name'),position:g('position')||null,status:g('status')||null,birthdate:g('birthdate')||null,date_appointed:g('date_appointed')||null,date_promoted:g('date_promoted')||null,remarks:g('remarks')||null}}).filter(r=>r.full_name),
+  bad=rows.find(r=>(r.date_appointed&&r.date_promoted&&r.date_promoted<r.date_appointed)||(r.birthdate&&r.date_appointed&&r.date_appointed<=r.birthdate));
+  if(bad){$('#sm').innerHTML=`<span class="warn">Check the dates for ${esc(bad.full_name)}: the promotion cannot be before the appointment, and the appointment cannot be before the birthdate.</span>`;return}
+  let error=null;
+  if(DEMO){PERS=PERS.filter(x=>x.school_id!==school.id).concat(rows.map(r=>({...r,id:r.id||'n'+Math.random(),school_id:school.id})))}
+  else{const keep=new Set(rows.filter(r=>r.id).map(r=>r.id)),gone=[...orig].filter(i=>!keep.has(i)),ex=rows.filter(r=>r.id).map(r=>({...r,school_id:school.id,updated_at:new Date().toISOString()})),nw=rows.filter(r=>!r.id).map(({id,...r})=>({...r,school_id:school.id}));
+   if(ex.length)({error}=await sb.from('personnel_roster').upsert(ex));if(!error&&nw.length)({error}=await sb.from('personnel_roster').insert(nw));if(!error&&gone.length)({error}=await sb.from('personnel_roster').delete().in('id',gone))}
+  if(!error&&!DEMO)await load();
+  if(error){$('#sm').innerHTML=`<span class="warn">Not saved: ${esc(error.message)}</span>`;return}
+  encodeRoster();$('#sm').innerHTML='<span class="ok">Saved.</span>'}}
+
+function filterRows(id,q){q=q.toLowerCase();document.querySelectorAll('#'+id+' tbody tr').forEach(r=>{r.style.display=r.textContent.toLowerCase().includes(q)?'':'none'})}
+async function openLac(p){if(DEMO){alert('Preview mode: files are not stored.');return}const{data,error}=await sb.storage.from('lac-plans').createSignedUrl(p,600);if(error)return alert(error.message);window.open(data.signedUrl,'_blank')}
+async function listSave(table,rows,orig,extra){let error=null;const keep=new Set(rows.filter(r=>r.id).map(r=>r.id)),gone=[...orig].filter(i=>!keep.has(i)),now=new Date().toISOString(),ex=rows.filter(r=>r.id).map(r=>({...r,...extra,updated_at:now})),nw=rows.filter(r=>!r.id).map(({id,...r})=>({...r,...extra}));
+ if(ex.length)({error}=await sb.from(table).upsert(ex));if(!error&&nw.length)({error}=await sb.from(table).insert(nw));if(!error&&gone.length)({error}=await sb.from(table).delete().in('id',gone));return error}
+function encodeInnov(){const mine=INN.filter(x=>x.school_id===school.id),orig=new Set(mine.map(x=>x.id)),opt=(L,cur)=>['',...L].map(p=>`<option value="${esc(p)}" ${p===cur?'selected':''}>${esc(p)||'Select'}</option>`).join(''),
+ rowH=(x={})=>`<tr data-id="${x.id||''}"><td><input type="text" data-k="title" style="text-align:left;min-width:230px" value="${esc(x.title||'')}"></td><td><input type="text" data-k="proponents" placeholder="Surname, Given name; Surname, Given name" style="text-align:left;min-width:230px" value="${esc(x.proponents||'')}"></td><td><input type="text" data-k="designation" placeholder="Teacher III; Master Teacher I" style="text-align:left;min-width:200px" value="${esc(x.designation||'')}"></td><td><select data-k="category" style="min-width:200px">${opt(INC,x.category)}</select></td><td><input type="text" data-k="sy_started" placeholder="2024-2025" style="text-align:left;min-width:100px" value="${esc(x.sy_started||'')}"></td><td><textarea data-k="description" rows="3" style="min-width:250px">${esc(x.description||'')}</textarea></td><td><textarea data-k="results" rows="3" style="min-width:250px">${esc(x.results||'')}</textarea></td><td><button class="btn sm alt rm" type="button">Remove</button></td></tr>`;
+ $('#main').innerHTML=`<div class="card wide"><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">${ebar()}</div><h3>${MODS.innov.t} • ${esc(school.name)}</h3><div class="note">List the innovations and best practices of the school: the title, the proponent or proponents and their designations (for several proponents, separate names with a semicolon and give the designations in the same order), the category, the school year it started, a short description and the results so far.</div>${innErr&&!DEMO?`<div class="warn">The innovations table is not ready (${esc(innErr)}). Ask the PSDS office to run supabase_update_batch4.sql.</div>`:''}
+ <div class="tw"><table class="grid" id="it"><thead><tr><th>Innovation or best practice</th><th>Proponent(s)</th><th>Designation(s)</th><th>Category</th><th>Since SY</th><th>Description</th><th>Results</th><th></th></tr></thead><tbody>${(mine.length?mine:[{},{}]).map(rowH).join('')}</tbody></table></div>
+ <p><button class="btn alt" id="add" type="button">Add a row</button> <button class="btn" id="sv">Save list</button> <span id="sm"></span></p></div>`;
+ const tb=$('#it tbody');document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{emod=b.dataset.m;encode()});
+ tb.addEventListener('click',e=>{if(e.target.classList.contains('rm'))e.target.closest('tr').remove()});$('#add').onclick=()=>tb.insertAdjacentHTML('beforeend',rowH());
+ $('#sv').onclick=async()=>{const rows=[...tb.querySelectorAll('tr')].map(tr=>{const g=k=>tr.querySelector(`[data-k="${k}"]`).value.trim();return{id:tr.dataset.id||null,title:g('title'),proponents:g('proponents')||null,designation:g('designation')||null,category:g('category')||null,sy_started:g('sy_started')||null,description:g('description')||null,results:g('results')||null}}).filter(r=>r.title);
+  let error=null;if(DEMO){INN=INN.filter(x=>x.school_id!==school.id).concat(rows.map(r=>({...r,id:r.id||'n'+Math.random(),school_id:school.id})))}else{error=await listSave('school_innovations',rows,orig,{school_id:school.id});if(!error)await load()}
+  if(error){$('#sm').innerHTML=`<span class="warn">Not saved: ${esc(error.message)}</span>`;return}encodeInnov();$('#sm').innerHTML='<span class="ok">Saved.</span>'}}
+function encodeSlac(){const pl=LACP.find(x=>x.school_id===school.id&&x.sy===SY)||{},mine=LACS.filter(x=>x.school_id===school.id).sort((a,b)=>(a.date_implemented||'').localeCompare(b.date_implemented||'')),orig=new Set(mine.map(x=>x.id)),
+ rowH=(x={})=>`<tr data-id="${x.id||''}"><td><input type="text" data-k="title" style="text-align:left;min-width:320px" value="${esc(x.title||'')}"></td><td><input type="number" min="0" data-k="participants" value="${x.participants??''}"></td><td><input type="date" data-k="date_implemented" value="${x.date_implemented||''}"></td><td><button class="btn sm alt rm" type="button">Remove</button></td></tr>`,
+ msg=t=>{$('#sm').innerHTML=`<span class="warn">${esc(t)}</span>`},planRow=(o={})=>({school_id:school.id,sy:SY,approved:$('#lp').checked,file_path:pl.file_path||null,file_name:pl.file_name||null,updated_at:new Date().toISOString(),...o}),
+ putPlan=async row=>{if(DEMO){LACP=LACP.filter(x=>!(x.school_id===school.id&&x.sy===SY));LACP.push(row);return null}const{error}=await sb.from('lac_plans').upsert(row);return error};
+ $('#main').innerHTML=`<div class="card wide"><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">${ebar()}</div><h3>${MODS.slac.t} • ${esc(school.name)} • SY ${SY}</h3><div class="note">School Learning Action Cell for the school year shown in the header. Tick the box once the Division Office has approved the LAC plan, upload the approved plan, then list each LAC session implemented.${lacErr&&!DEMO?` <span class="warn">The SLAC tables are not ready (${esc(lacErr)}). Ask the PSDS office to run supabase_update_batch4.sql.</span>`:''}</div>
+ <h3 style="margin-top:12px">LAC plan</h3><label class="chk"><input type="checkbox" id="lp" ${pl.approved?'checked':''} style="width:20px;height:20px;accent-color:#7a1f2b"> LAC plan approved by the Division Office</label>
+ <p style="margin:10px 0">${pl.file_name?`Plan file: <b>${esc(pl.file_name)}</b> <button class="btn sm alt" id="of" type="button">Open</button> <button class="btn sm alt" id="rf" type="button">Remove file</button>`:'No plan file uploaded yet.'}</p>
+ <p><input type="file" id="lacf" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"> <button class="btn alt" id="up" type="button">${pl.file_name?'Replace file':'Upload file'}</button> <span class="note">PDF, Word or image, up to 10 MB.</span></p>
+ <h3 style="margin-top:16px">LAC sessions implemented</h3><div class="tw"><table class="grid" id="st"><thead><tr><th>Title of the LAC session</th><th>Participants</th><th>Date implemented</th><th></th></tr></thead><tbody>${(mine.length?mine:[{},{},{}]).map(rowH).join('')}</tbody></table></div>
+ <p><button class="btn alt" id="add" type="button">Add a session</button> <button class="btn" id="sv">Save plan status and sessions</button> <span id="sm"></span></p></div>`;
+ const tb=$('#st tbody');document.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{emod=b.dataset.m;encode()});
+ tb.addEventListener('click',e=>{if(e.target.classList.contains('rm'))e.target.closest('tr').remove()});$('#add').onclick=()=>tb.insertAdjacentHTML('beforeend',rowH());
+ $('#of')&&($('#of').onclick=()=>openLac(pl.file_path));
+ $('#up').onclick=async()=>{const fl=$('#lacf').files[0];if(!fl){msg('Choose a file first.');return}if(fl.size>10*1024*1024){msg('The file is larger than 10 MB.');return}let path='demo/'+fl.name;
+  if(!DEMO){path=`${school.id}/${SY}/${Date.now()}_${fl.name.replace(/[^\w.\-]+/g,'_')}`;const{error}=await sb.storage.from('lac-plans').upload(path,fl);if(error){msg('Not uploaded: '+error.message);return}if(pl.file_path)await sb.storage.from('lac-plans').remove([pl.file_path])}
+  const e=await putPlan(planRow({file_path:path,file_name:fl.name}));if(e){msg('Not saved: '+e.message);return}if(!DEMO)await load();encodeSlac();$('#sm').innerHTML='<span class="ok">File uploaded.</span>'};
+ $('#rf')&&($('#rf').onclick=async()=>{if(!DEMO&&pl.file_path)await sb.storage.from('lac-plans').remove([pl.file_path]);const e=await putPlan(planRow({file_path:null,file_name:null}));if(e){msg('Not saved: '+e.message);return}if(!DEMO)await load();encodeSlac();$('#sm').innerHTML='<span class="ok">File removed.</span>'});
+ $('#sv').onclick=async()=>{const rows=[...tb.querySelectorAll('tr')].map(tr=>{const g=k=>tr.querySelector(`[data-k="${k}"]`).value.trim();return{id:tr.dataset.id||null,title:g('title'),participants:g('participants')===''?null:Math.max(0,Math.round(+g('participants'))),date_implemented:g('date_implemented')||null}}).filter(r=>r.title);
+  let error=await putPlan(planRow());
+  if(!error){if(DEMO){LACS=LACS.filter(x=>x.school_id!==school.id).concat(rows.map(r=>({...r,id:r.id||'n'+Math.random(),school_id:school.id,sy:SY})))}else error=await listSave('lac_sessions',rows,orig,{school_id:school.id,sy:SY})}
+  if(error){msg('Not saved: '+error.message);return}if(!DEMO)await load();encodeSlac();$('#sm').innerHTML='<span class="ok">Saved.</span>'}}
+// ---------- Schools & accounts (PSDS) ----------
+function fillFs(){const c=$('#fs').value||'all';$('#fs').innerHTML='<option value="all">All schools</option>'+schools.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('');$('#fs').value=schools.some(s=>s.id===c)?c:'all'}
+function cu(b){const m=b.textContent.trim().match(/^([\d,]*\.?\d+)(%?)$/);if(!m||matchMedia('(prefers-reduced-motion:reduce)').matches)return;const end=parseFloat(m[1].replace(/,/g,'')),dec=(m[1].split('.')[1]||'').length,t0=performance.now();(function st(now){const p=Math.min(1,(now-t0)/1000),e=1-Math.pow(1-p,3);b.textContent=(end*e).toLocaleString('en-PH',{minimumFractionDigits:dec,maximumFractionDigits:dec})+m[2];if(p<1)requestAnimationFrame(st)})(t0)}
+function fx(){document.querySelectorAll('#main>*').forEach((e,i)=>e.style.setProperty('--d',Math.min(i,12)*70+'ms'));document.querySelectorAll('.kp b').forEach(cu)}
+function demoData(){let x=7;const r=(a,b)=>Math.round(a+(x=(x*9301+49297)%233280)/233280*(b-a));
+ schools=['Sample Elementary School','Sample Integrated School','Sample National High School','Sample Agricultural High School','Sample Central School','Sample Annex School','Sample Technical School','Sample Hillside Elementary','Sample East Elementary','Sample Riverside Integrated School'].map((n,i)=>({id:'s'+i,name:n,school_code:'30000'+i,depts:i%3===0?['Elementary']:i%3===1?['Elementary','JHS','SHS']:['JHS','SHS'],last_push:null}));
+ D={};DP={};DS={};TAD={};INN=[];LACP=[];LACS=[];TOP=[];PERS=[];GSA=[];MPS=[];const putP=(s,m,k,c,val)=>{(((DP[s]??={})[m]??={})[k]??={})[c]=val},put=(s,m,k,c,val)=>{(((D[s]??={})[m]??={})[k]??={})[c]=val},R=rateRows(SY),subs=['English','Filipino','Mathematics','Science','Araling Panlipunan','MAPEH','TLE'];
+ schools.forEach(s=>{GR.filter(g=>s.depts.includes(dOf(g))).forEach(g=>{const e=r(24,58);put(s.id,'learners',g,'enr_M',e);put(s.id,'learners',g,'enr_F',r(22,56));put(s.id,'learners',g,'ip_M',r(0,6));put(s.id,'learners',g,'ip_F',r(0,6));put(s.id,'learners',g,'cct_M',r(2,12));put(s.id,'learners',g,'cct_F',r(2,12));putP(s.id,'learners',g,'enr_M',r(22,58));putP(s.id,'learners',g,'enr_F',r(20,56))});
+  const mx=POSG.flatMap((g,gi)=>g[1].map(()=>[8,2,2,1,1,1,1,1,1][gi]));POS.forEach((p,i)=>{const t=r(0,mx[i]);put(s.id,'positions',p,'M',Math.round(t*.35));put(s.id,'positions',p,'F',t-Math.round(t*.35))});
+  {const FN=['Maria','Jose','Ana','Juan','Liza','Carlo','Rhea','Miguel','Kate','Paolo','Elena','Ramon'],LN=['Santos','Reyes','Cruz','Bautista','Garcia','Mendoza','Torres','Flores','Ramos','Dela Cruz'],PP=['Teacher I','Teacher II','Teacher III','Teacher III','Master Teacher I','Head Teacher III','Administrative Assistant II','Administrative Officer II','Teacher I','Teacher II'],NY=new Date().getFullYear(),z=n=>String(n).padStart(2,'0');
+   for(let i=0,nn=r(6,10);i<nn;i++){const by=r(1962,2001),ay=Math.min(by+r(22,28),NY-1),py=ay+r(3,12),st=i<7?'Permanent':PST[r(1,7)];PERS.push({id:'d'+Math.random(),school_id:s.id,full_name:LN[r(0,9)]+', '+FN[r(0,11)],position:PP[r(0,9)],status:st,birthdate:`${by}-${z(r(1,12))}-${z(r(1,28))}`,date_appointed:`${ay}-${z(r(1,12))}-${z(r(1,28))}`,date_promoted:py<NY-1&&st==='Permanent'&&r(0,1)?`${py}-${z(r(1,12))}-${z(r(1,28))}`:null,remarks:null})}}
+  SGCI.forEach(x=>put(s.id,'sgc',x,'v',r(0,3)>0?1:0));
+  {const w=r(0,1),h=r(0,2);[r(40,98),r(2,6),r(5000,80000),w,h,r(0,w+h)].forEach((x,i)=>put(s.id,'pta',PTR[i],'v',x))}
+  {const o=r(0,3);(((DS[s.id]??={}).own??={})[OWN[o]]??={}).v=r(5000,40000);if(r(0,2)===0)(((DS[s.id]??={}).own??={})[OWN[1]]??={}).v=r(800,4000)}
+  ['JHS','SHS'].forEach(k=>{['M','F'].forEach(x=>{put(s.id,'als',k,x,r(3,30));putP(s.id,'als',k,x,r(3,28))})});
+  GR.filter(g=>s.depts.includes(dOf(g))).forEach(g=>SNC.forEach(([id],i)=>['M','F'].forEach(x=>{put(s.id,'sned',g+'|'+x,id,r(0,i<7?2:1));putP(s.id,'sned',g+'|'+x,id,r(0,i<7?2:1))})));
+  TAY().forEach(y=>TAT.forEach(([k])=>{(((TAD[s.id]??={})[y]??={})[k]??={}).v=r(0,3)>0?1:0}));
+  {const T1=['Innovative Agri-Math Garden Problems','Project Basa-Bilang Tutoring','Digital Attendance and SF2 Automation','School-Based Feeding Garden','Parent-Teacher Home Visit Program','Mobile Learning Corner'],C1=INC,n1=r(0,3);for(let i=0;i<n1;i++)INN.push({id:'i'+Math.random(),school_id:s.id,title:T1[r(0,5)],proponents:'Dela Cruz, Maria; Santos, Jose',designation:'Teacher III; Master Teacher I',category:C1[r(0,8)],sy_started:`${r(2022,2025)}-${r(2023,2026)}`,description:'Short description of the practice and how it is carried out in the school.',results:'Improved participation and learning outcomes among learners.'})}
+  {const Y=+SY.slice(0,4),z=n=>String(n).padStart(2,'0'),T2=['Contextualizing Learning Competencies','Item Analysis and Intervention Planning','Differentiated Instruction in Mixed Classes','Using the Phil-IRI Results','Classroom Management and Positive Discipline'],ok=r(0,2)>0;LACP.push({school_id:s.id,sy:SY,approved:ok,file_path:ok?'demo/LAC_Plan.pdf':null,file_name:ok?'LAC_Plan.pdf':null});for(let i=0,k=r(2,5);i<k;i++)LACS.push({id:'l'+Math.random(),school_id:s.id,sy:SY,title:T2[r(0,4)],participants:r(8,40),date_implemented:`${Y}-${z(r(6,12))}-${z(r(1,28))}`})}
+  pmesRows(SY).forEach(y=>{put(s.id,'pmes',y,'o',r(1,7));put(s.id,'pmes',y,'vs',r(10,30));put(s.id,'pmes',y,'s',r(2,10));put(s.id,'pmes',y,'u',r(0,2));put(s.id,'pmes',y,'p',0)});
+  s.depts.forEach(d=>['Teaching','Non-teaching'].forEach(c=>{const t=c==='Teaching'?r(4,14):r(1,3);put(s.id,'personnel',d+'|'+c,'M',Math.round(t*.35));put(s.id,'personnel',d+'|'+c,'F',t-Math.round(t*.35))}));
+  R.forEach((y,i)=>{put(s.id,'rates',y,'completion',r(90,99)+.5);put(s.id,'rates',y,'dropout',r(1,5)+.2);put(s.id,'rates',y,'graduation',r(92,99)+.1);put(s.id,'rates',y,'promotion',r(94,99)+.3);put(s.id,'rates',y,'repetition',r(0,3)+.3)});
+  const al=r(300,900)*1000,ga=Math.round(al*r(3,7)/100);put(s.id,'mooe','GAD','amt',ga);['Q1','Q2','Q3','Q4'].forEach((q,i)=>put(s.id,'mooe','GAD_'+q,'amt',i<2?Math.round(ga*r(15,30)/100):i===2?Math.round(ga*r(5,15)/100):0));put(s.id,'mooe','Allocation','amt',al);['Q1','Q2','Q3','Q4'].forEach((q,i)=>put(s.id,'mooe',q,'amt',i<2?Math.round(al*r(18,30)/100):i===2?Math.round(al*r(8,20)/100):0));
+  ['Baseline','Endline'].forEach(p=>{put(s.id,'bmi',p,'sw',r(2,12));put(s.id,'bmi',p,'w',r(10,40));put(s.id,'bmi',p,'n',r(250,600));put(s.id,'bmi',p,'ow',r(20,60));put(s.id,'bmi',p,'ob',r(5,25))});
+  GR.slice(1,11).filter(g=>s.depts.includes(dOf(g))).forEach(g=>['pre','post'].forEach((p,i)=>{put(s.id,'philiri',g,p+'_f',r(8,20)-i*4);put(s.id,'philiri',g,p+'_i',r(15,30));put(s.id,'philiri',g,p+'_n',r(15,35)+i*6)}));
+  ['Literacy','Numeracy'].forEach(k=>{put(s.id,'aral',k,'learners',r(20,90));put(s.id,'aral',k,'tutors',r(3,12))});
+  ACT.forEach(k=>{const L=r(15,70);put(s.id,'aral2',k,'learners',L);put(s.id,'aral2',k,'improved',Math.round(L*r(55,90)/100));put(s.id,'aral2',k,'met',Math.round(L*r(30,70)/100));const pr=r(30,50);put(s.id,'aral2',k,'pre',pr);put(s.id,'aral2',k,'post',pr+r(3,30))});
+  GUL.forEach((x,i)=>put(s.id,'gulayan',x,'v',[r(50,400),r(20,120),r(3,15),r(4,12),r(40,300),r(20,150),r(500,8000)][i]));
+  CAN.forEach((x,i)=>put(s.id,'canteen',x,'v',[1,r(100,600),r(10,40),r(2,15),r(0,2),r(5000,60000)][i]));
+  RHR.forEach((x,i)=>put(s.id,'rh',x,'v',[r(40,300),r(40,300),r(2,12),r(2,10),r(0,5)][i]));
+  ZSP.forEach((x,i)=>put(s.id,'zsup',x,'v',[r(0,1),r(0,1),r(0,1),r(30,90),r(20,300),r(50,800)][i]));
+  HROWS.forEach(([k])=>{const g=k.split('|')[0];if(!s.depts.includes(g==='10'?'JHS':'SHS'))return;put(s.id,'handa',k,'mps',r(38,78));put(s.id,'handa',k,'n',r(40,160));putP(s.id,'handa',k,'mps',r(35,74));putP(s.id,'handa',k,'n',r(40,150))});
+  [['10','JHS'],['12','SHS']].forEach(([g,d],gi)=>{if(!s.depts.includes(d))return;const FN=['Maria','Jose','Ana','Juan','Liza','Carlo','Rhea','Miguel','Kate','Paolo'],LN=['Santos','Reyes','Cruz','Bautista','Garcia','Mendoza','Torres','Flores','Ramos','Dela Cruz'];for(let i=0;i<10;i++)TOP.push({id:Math.random(),school_id:s.id,sy:SY,grade:g,learner_name:FN[i]+' '+LN[(i+s.id.length+gi*3+r(0,9))%10],score:r(80,99)+r(0,9)/10})});
+  MODS.ops.rows().forEach(([k])=>put(s.id,'ops',k,'v',/1=yes/.test(k)?1:r(1,40)));
+  if(s.depts.some(d=>d!=='Elementary'))subs.forEach(b=>['7','8','9','10'].forEach(g=>['1st Term','2nd Term','3rd Term'].forEach(t=>{GSA.push({school_id:s.id,subject:b,grade:g,term:t,value:r(78,93)});MPS.push({school_id:s.id,subject:b,grade:g,term:t,st1:r(45,85),st2:r(45,85),exam:r(45,85)})})))})}
+async function refreshSchools(){if(!DEMO)await load();fillFs();admin();fx()}
+function parseDepts(t){const m=(t||'').split(/[\/,;]/).map(x=>x.trim().toUpperCase()).map(x=>x.startsWith('E')?'Elementary':x.startsWith('J')?'JHS':x.startsWith('S')?'SHS':'').filter(Boolean);return m.length?[...new Set(m)]:['Elementary']}
+async function addSchools(list){const bad=list.filter(x=>!x.name||!x.school_code);if(!list.length||bad.length){$('#ae').textContent='Each school needs an ID and a name.';return}
+ if(DEMO)list.forEach(x=>schools.push({...x,id:'d'+Math.random(),last_push:null}));else{const{error}=await sb.from('schools').insert(list);if(error){$('#ae').textContent=error.message.includes('duplicate')?'A school with that ID already exists.':error.message;return}}
+ await refreshSchools()}
+async function acct(body){const{data:{session}}=await sb.auth.getSession();try{const r=await fetch('/.netlify/functions/account',{method:'POST',headers:{'content-type':'application/json',Authorization:'Bearer '+session.access_token},body:JSON.stringify(body)});return await r.json()}catch(e){return{error:'Could not reach the account function: '+e.message}}}
+function team(){const psds=me.role==='psds',sid=psds?(teamSch&&schools.some(x=>x.id===teamSch)?teamSch:schools[0]?.id):me.school_id,sch=schools.find(x=>x.id===sid),list=ENC.filter(x=>x.school_id===sid),ed=teamEdit&&list.find(x=>x.user_id===teamEdit),lab=Object.fromEntries(NAV),AS=NAV.filter(([k])=>k!=='overview');
+ $('#main').innerHTML=`<div class="card wide"><h3>Encoder accounts${sch?' • '+esc(sch.name):''}</h3><div class="note">Give each person who owns a set of data their own login. An encoder signs in, encodes only the tabs you assign and sees only those dashboard tabs for this school. The school head always sees every tab. Each login needs a username and a temporary password (8+ characters) that you hand over; they can be reset here at any time.</div>
+ ${psds?`<label for="tms">School</label><select id="tms" style="max-width:420px">${schools.map(x=>`<option value="${x.id}" ${x.id===sid?'selected':''}>${esc(x.name)}</option>`).join('')}</select>`:''}</div>
+ ${tbl('Encoders of this school',['Name','Username','Assigned tabs','Actions'],list.length?list.map(x=>[esc(x.full_name||'—'),esc(x.username||'—'),esc((x.tabs||[]).map(k=>lab[k]||k).join(', ')||'none'),`<button class="btn sm alt" data-tm="edit" data-u="${x.user_id}">Edit</button> <button class="btn sm alt" data-tm="pw" data-u="${x.user_id}">Reset password</button> <button class="btn sm alt" data-tm="del" data-u="${x.user_id}">Remove</button>`]):[['No encoder accounts yet.','','','']])}
+ <div class="card wide" data-teamform><h3>${ed?'Edit encoder: '+esc(ed.full_name||ed.username):'Add an encoder'}</h3>
+ <div class="af"><div><label for="tn">Full name</label><input id="tn" value="${esc(ed?.full_name||'')}" placeholder="Surname, Given name"></div><div><label for="tu">Username</label><input id="tu" value="${esc(ed?.username||'')}" ${ed?'disabled':''} placeholder="e.g. mdelacruz" autocomplete="off"></div><div><label for="tp">${ed?'New password (optional)':'Temporary password'}</label><input id="tp" type="text" autocomplete="off" placeholder="8+ characters"></div></div>
+ <label style="margin-top:10px">Tabs this person owns (encoding and dashboard)</label>
+ <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:4px 14px;margin:6px 0">${AS.map(([k,l])=>`<label style="display:flex;gap:6px;align-items:center;font-weight:400"><input type="checkbox" class="tt" value="${k}" ${(ed?.tabs||[]).includes(k)?'checked':''}>${esc(l)}${k==='personnel'?' (includes the roster with birthdates)':k==='academic'?' (view only)':''}</label>`).join('')}</div>
+ <p><button class="btn" data-tm="save">${ed?'Save changes':'Create encoder'}</button> ${ed?'<button class="btn alt" data-tm="cancel">Cancel</button> ':''}<span class="se-msg" role="status"></span></p></div>`;
+ const sel=$('#tms');if(sel)sel.onchange=()=>{teamSch=sel.value;teamEdit=null;team()}}
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-tm]');if(!b)return;const a=b.dataset.tm,uid=b.dataset.u,box=document.querySelector('[data-teamform]'),msg=box&&box.querySelector('.se-msg'),bad=t=>{if(msg)msg.innerHTML=`<span class="warn">${esc(t)}</span>`},sid=me.role==='psds'?(teamSch&&schools.some(x=>x.id===teamSch)?teamSch:schools[0]?.id):me.school_id;
+ const done=async()=>{if(!DEMO)await load();teamEdit=null;team()};
+ if(a==='edit'){teamEdit=uid;team();scrollTo(0,document.body.scrollHeight);return}
+ if(a==='cancel'){teamEdit=null;team();return}
+ if(a==='pw'){const pw=prompt('New temporary password (8+ characters):');if(pw===null)return;if(pw.length<8)return alert('Use 8 or more characters.');if(!DEMO){const r=await acct({action:'update_encoder',user_id:uid,password:pw});if(r.error)return alert(r.error)}return alert('Password changed. Hand it to the encoder.')}
+ if(a==='del'){const x=ENC.find(y=>y.user_id===uid);if(!confirm(`Remove ${x?.full_name||x?.username}? The login is deleted. Data already encoded stays with the school.`))return;if(DEMO)ENC=ENC.filter(y=>y.user_id!==uid);else{const r=await acct({action:'delete_encoder',user_id:uid});if(r.error)return alert(r.error)}return done()}
+ if(a==='save'){const name=$('#tn').value.trim(),user=$('#tu').value.trim().toLowerCase(),pw=$('#tp').value,tabs=[...document.querySelectorAll('.tt:checked')].map(c=>c.value);
+  if(!name)return bad('Type the full name.');if(!teamEdit&&!/^[a-z0-9._-]{3,30}$/.test(user))return bad('Username: 3 to 30 letters, numbers, dot, dash or underscore.');
+  if(!teamEdit&&pw.length<8)return bad('The temporary password needs 8 or more characters.');if(teamEdit&&pw&&pw.length<8)return bad('A new password needs 8 or more characters.');if(!tabs.length)return bad('Tick at least one tab.');
+  msg.textContent='Saving…';
+  if(DEMO){if(teamEdit){const x=ENC.find(y=>y.user_id===teamEdit);Object.assign(x,{full_name:name,tabs})}else{if(ENC.some(y=>y.username===user))return bad('That username is already taken.');ENC.push({user_id:'d'+Date.now(),school_id:sid,role:'encoder',full_name:name,username:user,tabs})}}
+  else{const r=await acct(teamEdit?{action:'update_encoder',user_id:teamEdit,full_name:name,tabs,password:pw||undefined}:{action:'create_encoder',school_id:sid,username:user,password:pw,full_name:name,tabs});if(r.error)return bad(r.error)}
+  await done();const m2=document.querySelector('[data-teamform] .se-msg');if(m2)m2.innerHTML='<span class="ok">Saved.</span>'}});
+function snedRow(id='',nm=''){return`<div class="se-row" data-id="${esc(id)}" style="display:flex;gap:6px;margin:4px 0;align-items:center"><input type="text" maxlength="80" value="${esc(nm)}" placeholder="Category name" style="flex:1;text-align:left" aria-label="SNED category name"><button type="button" class="btn sm alt" data-na="up" aria-label="Move up">↑</button><button type="button" class="btn sm alt" data-na="down" aria-label="Move down">↓</button><button type="button" class="btn sm alt" data-na="del" aria-label="Remove category">✕</button></div>`}
+function snedEditor(){return`<div class="card wide" data-sneded><h3>SNED categories</h3><div class="note">The categories of learners with disabilities that school heads encode in the SNED learners tab (per grade level and gender). Rename, add, remove or reorder them, then Save. Renaming keeps the counts already encoded. Removing a category only hides it: its counts stay saved and return if you add it back by saving a list that still has it (use Reset to defaults to restore the original list).</div>${snedErr&&!DEMO?`<div class="warn">The category list cannot be saved yet (${esc(snedErr)}). Run supabase_update_sned.sql in Supabase.</div>`:''}<div class="se-list" style="max-width:560px;margin-top:8px">${SNC.map(([id,nm])=>snedRow(id,nm)).join('')}</div><p style="margin:8px 0 0"><button type="button" class="btn sm alt" data-na="add">Add category</button> <button type="button" class="btn sm" data-na="save">Save categories</button> <button type="button" class="btn sm alt" data-na="reset">Reset to defaults</button> <span class="se-msg" role="status"></span></p></div>`}
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-na]');if(!b)return;const box=b.closest('[data-sneded]');if(!box)return;const list=box.querySelector('.se-list'),row=b.closest('.se-row'),a=b.dataset.na,msg=box.querySelector('.se-msg'),bad=t=>{msg.innerHTML=`<span class="warn">${esc(t)}</span>`};
+ if(a==='up'){if(row.previousElementSibling)list.insertBefore(row,row.previousElementSibling);return}
+ if(a==='down'){if(row.nextElementSibling)list.insertBefore(row.nextElementSibling,row);return}
+ if(a==='del'){row.remove();return}
+ if(a==='add'){list.insertAdjacentHTML('beforeend',snedRow('n'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),''));list.lastElementChild.querySelector('input').focus();return}
+ if(a==='reset'){list.innerHTML=SNC_DEF.map(([id,nm])=>snedRow(id,nm)).join('');msg.textContent='Defaults restored here. Press Save categories to apply.';return}
+ const items=[...list.querySelectorAll('.se-row')].map(r=>({id:r.dataset.id,name:r.querySelector('input').value.trim().replace(/\s+/g,' ')}));
+ if(!items.length)return bad('Keep at least one category.');
+ if(items.some(x=>!x.name))return bad('A category has no name. Type a name or remove the row.');
+ const seen=new Set();for(const x of items){const k=x.name.toLowerCase();if(seen.has(k))return bad('"'+x.name+'" appears twice.');seen.add(k)}
+ msg.textContent='Saving…';
+ if(DEMO){SNC.length=0;items.forEach(x=>SNC.push([x.id,x.name]))}
+ else{const ids=items.map(x=>x.id);let{error}=await sb.from('sned_categories').upsert(items.map((x,i)=>({id:x.id,name:x.name,sort:i+1})));if(!error)({error}=await sb.from('sned_categories').delete().not('id','in','('+ids.join(',')+')'));if(error)return bad('Not saved: '+error.message);await load()}
+ admin();const m2=document.querySelector('[data-sneded] .se-msg');if(m2)m2.innerHTML='<span class="ok">Saved.</span>'});
+function admin(){const cnt=s=>f(Object.values(D[s.id]||{}).reduce((a,m)=>a+Object.values(m).reduce((b,r)=>b+Object.values(r).filter(x=>x!=null).length,0),0));
+ $('#main').innerHTML=`<div class="card wide"><h3>Add schools</h3><div class="note">Add one school below, or paste many lines as: School ID, School name, Departments (Elementary / JHS / SHS). Departments are optional; the default is Elementary.</div>
+ <div class="af"><div><label for="ac">School ID</label><input id="ac"></div><div><label for="an">School name</label><input id="an"></div><div><label for="ad">Departments</label><select id="ad" multiple size="3"><option selected>Elementary</option><option>JHS</option><option>SHS</option></select></div><button class="btn" id="aa">Add school</button></div>
+ <label for="ab">Add many at once</label><textarea id="ab" rows="4" placeholder="300001, Sample Elementary School, Elementary&#10;300002, Sample Integrated School, Elementary/JHS/SHS"></textarea><p><button class="btn alt" id="ba">Add all lines</button></p><div class="warn" id="ae" role="alert"></div></div>
+ ${snedEditor()}
+ ${tbl('Schools and logins',['School','School ID','Departments','Encoded entries','Last COMPASS push','Actions'],schools.map(s=>[esc(s.name),esc(s.school_code),s.depts.join(', '),cnt(s),s.last_push?new Date(s.last_push).toLocaleString():'never',`<button class="btn sm alt" data-a="edit" data-i="${s.id}">Edit</button> <button class="btn sm" data-a="acc" data-i="${s.id}">Login</button> <button class="btn sm alt" data-a="tok" data-i="${s.id}">COMPASS token</button> <button class="btn sm alt" data-a="del" data-i="${s.id}">Delete</button>`]))}`;
+ $('#aa').onclick=()=>addSchools([{school_code:$('#ac').value.trim(),name:$('#an').value.trim(),depts:[...$('#ad').selectedOptions].map(o=>o.value)}]);
+ $('#ba').onclick=()=>addSchools($('#ab').value.split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{const p=l.split(',').map(x=>x.trim());return{school_code:p[0],name:p[1],depts:parseDepts(p[2])}}));
+ document.querySelectorAll('[data-a]').forEach(b=>b.onclick=async()=>{const s=schools.find(x=>x.id===b.dataset.i),a=b.dataset.a;
+  if(a==='edit'){const code=prompt('School ID:',s.school_code);if(code===null)return;const name=prompt('School name:',s.name);if(name===null)return;const d=prompt('Departments (Elementary / JHS / SHS):',s.depts.join('/'));if(d===null)return;
+   const row={school_code:code.trim(),name:name.trim(),depts:parseDepts(d)};if(DEMO)Object.assign(s,row);else{const{error}=await sb.from('schools').update(row).eq('id',s.id);if(error)return alert(error.message)}return refreshSchools()}
+  if(a==='del'){if(!confirm(`Delete ${s.name}? Its encoded data and COMPASS data are deleted too. This cannot be undone.`))return;
+   if(DEMO)schools=schools.filter(x=>x.id!==s.id);else{const{error}=await sb.from('schools').delete().eq('id',s.id);if(error)return alert(error.message)}return refreshSchools()}
+  if(DEMO)return alert('Preview mode: logins and tokens work on the live site.');
+  if(a==='tok'){const{data,error}=await sb.rpc('new_push_token',{p_school:s.id});return prompt(error?error.message:`COMPASS push token for ${s.name} (shown once, copy it now). School ID: ${s.school_code}`,data||'')}
+  const u=prompt('Username for '+s.name+' (leave blank to reset an existing login):','');const p=prompt('Temporary password (8+ characters):');if(!p)return;
+  const{data:{session}}=await sb.auth.getSession();const r=await fetch('/.netlify/functions/account',{method:'POST',headers:{'content-type':'application/json',Authorization:'Bearer '+session.access_token},body:JSON.stringify({school_id:s.id,username:u,password:p})}).then(r=>r.json());
+  alert(r.ok?(r.reset?'Password reset.':'Login created: '+r.username):r.error)})}
+// ---------- Shell ----------
+const NAV=[['overview','Overview'],['learners','Learners & enrolment'],['personnel','Personnel'],['positions','Position distribution'],['pmes','Teacher PMES'],['rates','Performance indicators'],['academic','GSA & MPS'],['handa','Project HANDA'],['mooe','MOOE & GAD'],['okdeped','OK sa DepEd'],['philiri','Phil-IRI'],['aral','ARAL'],['ops','Operations'],['innov','Innovations'],['ta','Technical assistance'],['als','ALS'],['sned','SNED learners'],['slac','SLAC']];
+function render(){charts.forEach(c=>c.destroy());charts=[];Q=[];const head=me.role==='psds'?[...NAV,['admin','Schools & logins'],['team','Encoder accounts']]:me.role==='encoder'?[['encode','Encode data'],...NAV.filter(([k])=>k!=='overview'&&(me.tabs||[]).includes(k))]:[['encode','Encode data'],['mine','My dashboard'],...NAV.slice(1),['team','Encoder accounts']];
+ if(!head.some(x=>x[0]===sec))sec=head[0][0];
+ $('#nav').innerHTML=head.map(([k,l])=>`<button class="${k===sec?'on':''}" data-s="${k}">${l}</button>`).join('');document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{sec=b.dataset.s;render()});
+ const fsv=$('#fs').value;S=me.role!=='psds'?[school]:fsv==='all'?schools:schools.filter(s=>s.id===fsv);
+ if(sec==='encode'){encode();return fx()}if(sec==='admin'){admin();return fx()}if(sec==='team'){team();return fx()}
+ $('#main').innerHTML=(V[sec==='mine'?'overview':sec]||V.overview)();lazy();fx()}
+async function start(role){let p;
+ if(DEMO){demoData();p={role,school_id:schools[1].id,tabs:['sned','handa','okdeped']};ENC=[{user_id:'d1',school_id:schools[1].id,role:'encoder',full_name:'Dela Cruz, Maria',username:'mdelacruz',tabs:['sned','als']},{user_id:'d2',school_id:schools[1].id,role:'encoder',full_name:'Reyes, Jose',username:'jreyes',tabs:['handa','philiri','okdeped']}];$('#demo').hidden=false}
+ else{const{data:{user}}=await sb.auth.getUser();({data:p}=await sb.from('profiles').select('*').eq('user_id',user.id).single());
+ if(!p){$('#le').textContent='This account has no role yet. Ask the PSDS office.';await sb.auth.signOut();show('login');return}}
+ me=p;$('#login').hidden=true;$('#home').hidden=true;$('#app').hidden=false;scrollTo(0,0);$('#sy').innerHTML=SYS.map(y=>`<option ${y===SY?'selected':''}>${y}</option>`).join('');
+ await load();school=schools.find(s=>s.id===me.school_id);sec=me.role!=='psds'?'encode':'overview';if(me.role==='encoder'){const k=Object.keys(MODS).find(k=>!MODS[k].hidden&&allowedE(k));if(k)emod=k}
+ fillFs();$('#fs').hidden=me.role!=='psds';
+ $('#fs').onchange=render;$('#sy').onchange=async e=>{SY=e.target.value;await load();render()};render()}
+$('#lf').onsubmit=async e=>{e.preventDefault();if(DEMO){$('#le').textContent='Preview mode: use the preview buttons on the home page.';return}$('#le').textContent='';const{error}=await sb.auth.signInWithPassword({email:(u=>u.includes('@')?u:u+'@cluster9.tanaw.local')($('#u').value.trim().toLowerCase()),password:$('#p').value});
+ if(error)$('#le').textContent='Wrong username or password.';else start()};
+$('#lo').onclick=async()=>{if(sb)await sb.auth.signOut();location.reload()};
+if(sb)sb.auth.getSession().then(({data:{session}})=>{if(session)start()});
+const show=a=>{['home','login','app'].forEach(i=>$('#'+i).hidden=i!==a);scrollTo(0,0)};
+document.querySelectorAll('.go-login').forEach(b=>b.onclick=e=>{e.preventDefault();show('login')});
+$('#bk').onclick=e=>{e.preventDefault();show('home')};
+if(DEMO)document.querySelectorAll('[data-demo]').forEach(b=>b.onclick=()=>start(b.dataset.demo));else document.querySelectorAll('.demo-only').forEach(e=>e.remove());
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');e.target.querySelectorAll('.cu').forEach(cu);if(e.target.classList.contains('cu'))cu(e.target);io.unobserve(e.target)}}),{threshold:.25});
+document.querySelectorAll('.rv').forEach(e=>io.observe(e));document.querySelectorAll('.mock .cu').forEach(cu);
+</script></body></html>
