@@ -28,6 +28,10 @@ async function run(req) {
     if (me.role !== "psds") return J(403, { error: "PSDS only" });
     return headLogin(body);
   }
+  if (body.action === "create_psds" || body.action === "update_psds" || body.action === "delete_psds") {
+    if (me.role !== "psds") return J(403, { error: "PSDS only" });
+    return psdsAccounts(who.id, body);
+  }
   if (me.role !== "psds" && me.role !== "school_head") return J(403, { error: "Only the PSDS or a school head can manage encoder accounts" });
   const action = body.action;
   if (action === "create_encoder") return createEncoder(me, body);
@@ -106,6 +110,32 @@ async function updateEncoder(me, body) {
 async function deleteEncoder(me, body) {
   const t = await targetEncoder(me, body);
   if (!t) return J(404, { error: "Encoder not found" });
+  const r = await api(`/auth/v1/admin/users/${t.user_id}`, { method: "DELETE" });
+  return r.ok ? J(200, { ok: true }) : J(400, await r.json());
+}
+
+// PSDS accounts: full cluster-office view. Only an existing PSDS can create, reset or remove them.
+async function psdsAccounts(selfId, body) {
+  if (body.action === "create_psds") {
+    const username = cleanUser(body.username), full_name = String(body.full_name || "").trim();
+    if (username.length < 3 || username.length > 30) return J(400, { error: "Username must be 3 to 30 characters (letters, numbers, dot, dash, underscore)" });
+    if (!full_name) return J(400, { error: "Full name required" });
+    if (!body.password || body.password.length < 8) return J(400, { error: "Password of 8+ characters required" });
+    const r = await api("/auth/v1/admin/users", { method: "POST", body: JSON.stringify({ email: emailOf(username), password: body.password, email_confirm: true }) });
+    const u = await r.json();
+    if (!u.id) return J(400, { error: /already|registered|exists/i.test(u.msg || u.message || "") ? "That username is already taken. Choose another." : (u.msg || u.message || "Could not create user") });
+    const p = await api("/rest/v1/profiles", { method: "POST", headers: { Prefer: "return=minimal" }, body: JSON.stringify({ user_id: u.id, role: "psds", full_name, username }) });
+    if (!p.ok) { await api(`/auth/v1/admin/users/${u.id}`, { method: "DELETE" }); return J(400, { error: "Could not save the profile" }); }
+    return J(200, { ok: true, username });
+  }
+  const t = body.user_id && (await api(`/rest/v1/profiles?user_id=eq.${body.user_id}&role=eq.psds&select=user_id`).then(r => r.json()))[0];
+  if (!t) return J(404, { error: "PSDS account not found" });
+  if (body.action === "update_psds") {
+    if (!body.password || body.password.length < 8) return J(400, { error: "Password of 8+ characters required" });
+    const r = await api(`/auth/v1/admin/users/${t.user_id}`, { method: "PUT", body: JSON.stringify({ password: body.password }) });
+    return r.ok ? J(200, { ok: true }) : J(400, await r.json());
+  }
+  if (t.user_id === selfId) return J(400, { error: "You cannot remove the account you are signed in with" });
   const r = await api(`/auth/v1/admin/users/${t.user_id}`, { method: "DELETE" });
   return r.ok ? J(200, { ok: true }) : J(400, await r.json());
 }
